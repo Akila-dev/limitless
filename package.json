@@ -1,0 +1,32 @@
+{
+	"name": "elthora",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"lint": "next lint"
+	},
+	"dependencies": {
+		"@gsap/react": "^2.1.2",
+		"@react-three/drei": "^10.1.2",
+		"@react-three/fiber": "^9.1.2",
+		"@react-three/postprocessing": "^3.0.4",
+		"framer-motion": "^12.16.0",
+		"framer-motion-3d": "^12.4.13",
+		"gsap": "^3.13.0",
+		"next": "15.3.3",
+		"raw-loader": "^4.0.2",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0",
+		"three": "^0.177.0"
+	},
+	"devDependencies": {
+		"@eslint/eslintrc": "^3",
+		"@tailwindcss/postcss": "^4",
+		"eslint": "^9",
+		"eslint-config-next": "15.3.3",
+		"tailwindcss": "^4"
+	}
+}
