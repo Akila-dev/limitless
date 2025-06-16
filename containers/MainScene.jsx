@@ -81,7 +81,8 @@ export default function MainScene() {
       <SceneWrapper />
       <Environment preset="studio" />
       <SelectiveBloom />
-      <OrbitControls />
+      <OrbitControls enableZoom={false} enablePan={false} />
+      {/* <OrbitControls /> */}
     </Canvas>
   );
 }
