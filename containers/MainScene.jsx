@@ -5,6 +5,7 @@ import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import {
   OrbitControls,
   OrthographicCamera,
+  PerspectiveCamera,
   Environment,
 } from "@react-three/drei";
 import { EffectComposer, RenderPass, UnrealBloomPass } from "three-stdlib";
@@ -79,7 +80,7 @@ export default function MainScene() {
       <OrthographicCamera makeDefault position={[0, 0, 10]} zoom={250} />
       <ambientLight intensity={0.2} />
       <SceneWrapper />
-      <Environment preset="studio" />
+      <Environment files="/env.jpg" />
       <SelectiveBloom />
       <OrbitControls enabled={false} />
       {/* <OrbitControls /> */}

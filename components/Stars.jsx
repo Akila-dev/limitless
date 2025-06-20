@@ -7,6 +7,7 @@ import * as random from "maath/random/dist/maath-random.esm";
 
 const Stars = (props) => {
   const [sphere, setSphere] = useState(null);
+  const ref = useRef();
 
   useEffect(() => {
     setSphere(() => random.inSphere(new Float32Array(3600), { radius: 9 }));
@@ -15,18 +16,12 @@ const Stars = (props) => {
 
   useFrame((state, delta) => {
     // props.ref.current.rotation.x -= delta / 20;
-    props.ref.current.rotation.y -= delta / 12;
+    ref.current.rotation.y -= delta / 12;
   });
 
   return (
-    <group rotation={[0, 0, Math.PI / 4]}>
-      <Points
-        ref={props.ref}
-        positions={sphere}
-        stride={3}
-        frustumCulled
-        {...props}
-      >
+    <mesh {...props} rotation={[0, 0, Math.PI / 4]}>
+      <Points ref={ref} positions={sphere} stride={3} frustumCulled>
         <PointMaterial
           transparent
           color="#eed185"
@@ -35,7 +30,7 @@ const Stars = (props) => {
           depthWrite={false}
         />
       </Points>
-    </group>
+    </mesh>
   );
 };
 

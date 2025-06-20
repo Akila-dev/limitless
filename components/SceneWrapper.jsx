@@ -15,6 +15,7 @@ const SceneWrapper = () => {
   const sunRef = useRef();
   const moonRef = useRef();
   const limitlessRef = useRef();
+  const limitlessTextRef = useRef();
 
   const planetRef1 = useRef();
   const planetRef2 = useRef();
@@ -71,44 +72,107 @@ const SceneWrapper = () => {
   ];
 
   const introTL = useRef();
-  //   useGSAP(
-  //     () => {
-  //       gsap.to(planetsOrbitRef.current.rotation, {
-  //         y: 360,
-  //         duration: 5000,
-  //         repeat: -1,
-  //       });
-  //     },
-  //     { scope: galaxyRef.current }
-  //   );
+  const limitlessScale = 0.6;
+  const limitlessEndX = 1.5;
+  useGSAP(
+    () => {
+      if (introTL && starsRef) {
+        // * PLANETS ORBIT INFINITE ROTATION
+        gsap.to(planetsOrbitRef.current.rotation, {
+          x: 0,
+          y: Math.PI * 2,
+          z: 0,
+          repeat: -1,
+          duration: 20,
+          ease: "none",
+        });
 
-  //   useGSAP(
-  //     () => {
-  //       introTL.current = gsap.timeline().from(starsRef.current.scale, {
-  //         x: 0,
-  //         y: 0,
-  //         z: 0,
-  //         duration: 1,
-  //         ease: "none",
-  //       });
-  //     },
-  //     { scope: galaxyRef }
-  //   );
+        // * TIMELINE CONFIG
+        introTL.current = gsap.timeline({
+          defaults: {
+            ease: "power2.in",
+            duration: 1,
+          },
+        });
+
+        // * STARS INTRO START
+        introTL.current
+          .from(starsRef.current.scale, {
+            x: 0,
+            y: 0,
+            z: 0,
+          })
+          .from(
+            starsRef.current.rotation,
+            {
+              x: 0,
+              y: Math.PI * 2,
+              z: 0,
+            },
+            "<"
+          )
+          // * STARS INTRO END
+
+          // * SOLAR ECLIPSE START
+          .to(
+            sunRef.current.scale,
+            {
+              x: limitlessScale,
+              y: limitlessScale,
+              z: limitlessScale,
+            },
+            "<"
+          )
+          .set(moonRef.current.scale, {
+            x: limitlessScale,
+            y: limitlessScale,
+            z: limitlessScale,
+          })
+          .to(moonRef.current.position, {
+            x: 0,
+            y: 0,
+            z: 0,
+          })
+          .to(limitlessRef.current.position, {
+            x: limitlessEndX,
+            y: 0,
+            z: 0,
+          })
+          .to(limitlessTextRef.current, {
+            fillOpacity: 1,
+          });
+        // * SOLAR ECLIPSE END
+
+        // * PLANETS INTRO START
+        planets_data.forEach((element) => {
+          introTL.current.to(element.ref.current.scale, {
+            x: element.scale || 1,
+            y: element.scale || 1,
+            z: element.scale || 1,
+          });
+        });
+        // * PLANETS INTRO END
+      }
+    },
+    { scope: galaxyRef }
+  );
 
   return (
     <Suspense fallback={null}>
       <group ref={galaxyRef}>
         <Stars ref={starsRef} />
-        <group ref={limitlessRef} position={[1.5, 0, 0]}>
-          <Sun ref={sunRef} scale={0.6} />
-          <Moon ref={moonRef} scale={0.6} />
+        <group ref={limitlessRef} position={[0, 0, 0]}>
+          <Sun ref={sunRef} scale={0} />
+          <Moon ref={moonRef} scale={0} position={[3, 0, 0]} />
           <Billboard>
             <Text
+              ref={limitlessTextRef}
               color="white"
               anchorX="center"
               anchorY="middle"
               position={[0, 0, 1]}
-              // position={[-0.23, 0, 1]}
+              transparent
+              fillOpacity={0}
               fontSize={0.1}
               // font={"/fonts/satoshi.otf"}
             >
@@ -128,7 +192,7 @@ const SceneWrapper = () => {
                   0,
                   Math.sin(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
                 ]}
-                scale={planet.scale || 1}
+                scale={0}
               />
             ))}
           </group>
