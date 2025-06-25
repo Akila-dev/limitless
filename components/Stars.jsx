@@ -10,7 +10,7 @@ const Stars = (props) => {
   const ref = useRef();
 
   useEffect(() => {
-    setSphere(() => random.inSphere(new Float32Array(3600), { radius: 9 }));
+    setSphere(() => random.inSphere(new Float32Array(9000), { radius: 6 }));
     console.log(sphere);
   }, []);
 
@@ -25,9 +25,10 @@ const Stars = (props) => {
         <PointMaterial
           transparent
           color="#eed185"
-          size={1.5}
+          size={0.01}
           sizeAttenuation={true}
           depthWrite={false}
+          opacity={props.opacity || 1}
         />
       </Points>
     </mesh>

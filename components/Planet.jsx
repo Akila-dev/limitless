@@ -1,14 +1,17 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Points, PointMaterial, Text, Billboard } from "@react-three/drei";
+import { Points, PointMaterial } from "@react-three/drei";
 import * as THREE from "three";
 
+import { BillboardText } from "@/components";
+
 export default function Planet(props) {
-  const sphereRef = useRef();
-  const light_color = "#e0e0ef";
+  const sphereRef1 = useRef();
+  const sphereRef2 = useRef();
+  const light_color = "#ffffff";
 
   const count = 1000;
-  const radius = 0.25;
+  const radius = props.radius;
   const points = useMemo(() => {
     const positions = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
@@ -23,13 +26,25 @@ export default function Planet(props) {
   }, [count, radius]);
 
   useFrame((state, delta) => {
-    sphereRef.current.rotation.x -= delta / 20;
-    sphereRef.current.rotation.y -= delta / 12;
+    sphereRef1.current.rotation.x -= delta / 20;
+    sphereRef1.current.rotation.y -= delta / 12;
+    sphereRef2.current.rotation.x += delta / 10;
+    sphereRef2.current.rotation.y += delta / 12;
   });
 
   return (
     <mesh {...props}>
-      <Points ref={sphereRef} positions={points} stride={3}>
+      <Points ref={sphereRef1} positions={points} stride={3}>
+        <PointMaterial
+          color={light_color}
+          size={0.04}
+          sizeAttenuation
+          depthWrite={false}
+          transparent
+          opacity={0.9}
+        />
+      </Points>
+      <Points ref={sphereRef2} positions={points} stride={3}>
         <PointMaterial
           color={light_color}
           size={0.02}
@@ -38,24 +53,13 @@ export default function Planet(props) {
           transparent
         />
       </Points>
-      <Billboard
-        follow={true}
-        lockX={false}
-        lockY={false}
-        lockZ={false} // Lock the rotation on the z axis (default=false)
-      >
-        <Text
-          color={light_color}
-          anchorX="center"
-          anchorY="middle"
-          fontSize={0.06}
-          position={[0, -radius * 1.3, 0]}
-          // rotation={[Math.PI / 1, Math.PI / 0.5, 0]}
-          // font={"/fonts/satoshi.otf"}
-        >
-          {props.label}
-        </Text>
-      </Billboard>
+      <BillboardText
+        text={props.label}
+        color={light_color}
+        fontSize={0.06}
+        position={[0, -radius * 1.3, 0]}
+        showText={props.showText}
+      />
     </mesh>
   );
 }

@@ -1,22 +1,29 @@
 "use client";
 
-import { useRef, Suspense } from "react";
+import { useRef, Suspense, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Billboard, Text } from "@react-three/drei";
 
-import { Stars, Sun, Moon, Planet } from "@/components";
+import { Stars, Sun, Moon, Planet, SelectiveBloom } from "@/components";
 
 gsap.registerPlugin(useGSAP);
 
 const SceneWrapper = () => {
+  const [animateSunBloom, setAnimateSunBloom] = useState(false);
+  const [showLimitlessText, setShowLimitlessText] = useState(false);
+  const [showPlanetsText, setShowPlanetsText] = useState(false);
+
+  // ! OBJECTS REF
   const galaxyRef = useRef();
   const starsRef = useRef();
   const sunRef = useRef();
   const moonRef = useRef();
   const limitlessRef = useRef();
   const limitlessTextRef = useRef();
+  const planetsOrbitRef = useRef();
 
+  // ! PLANETS REF
   const planetRef1 = useRef();
   const planetRef2 = useRef();
   const planetRef3 = useRef();
@@ -26,162 +33,175 @@ const SceneWrapper = () => {
   const planetRef7 = useRef();
   const planetRef8 = useRef();
 
-  const planetsOrbitRef = useRef();
-
-  const orbitRadius = 2.35;
+  // ! PLANETS AND ORBIT DATA
+  // const orbitRadius = 20;
+  const orbitRadius = 2.5;
   const orbitVal = 0.001;
+  const planetRad = 0.2;
+  const planetSM = planetRad * 0.8;
+  const planetMid = planetRad * 0.9;
+
+  // ! PLANETS DATA
   const planets_data = [
     {
       label: "THINK TANK",
       ref: planetRef1,
-      scale: 1,
+      radius: planetRad,
     },
     {
       label: "LAB",
       ref: planetRef2,
-      scale: 0.65,
+      radius: planetSM,
     },
     {
       label: "THINK TANK",
       ref: planetRef3,
+      radius: planetRad,
     },
     {
       label: "THINK TANK",
       ref: planetRef4,
-      scale: 0.7,
+      radius: planetMid,
     },
     {
       label: "THINK TANK",
       ref: planetRef5,
+      radius: planetRad,
     },
     {
       label: "THINK TANK",
       ref: planetRef6,
-      scale: 0.65,
+      radius: planetRad,
     },
     {
       label: "THINK TANK",
       ref: planetRef7,
-      scale: 0.9,
+      radius: planetSM,
     },
     {
       label: "ROADSHOW",
       ref: planetRef8,
-      scale: 0.7,
+      radius: planetMid,
     },
   ];
 
+  // ! INTRO ANIMATION
   const introTL = useRef();
-  const limitlessScale = 0.6;
-  const limitlessEndX = 1.5;
-  useGSAP(
-    () => {
-      if (introTL && starsRef) {
-        // * PLANETS ORBIT INFINITE ROTATION
-        gsap.to(planetsOrbitRef.current.rotation, {
-          x: 0,
-          y: Math.PI * 2,
+  const limitlessScale = 0.7;
+  const limitlessEndX = 2;
+  const limitlessY = -0.25;
+
+  const bloomProps = {
+    radius: 0,
+    strength: 1,
+  };
+
+  useGSAP(() => {
+    if (introTL && starsRef && planetsOrbitRef) {
+      // * TIMELINE CONFIG
+      introTL.current = gsap.timeline({
+        defaults: {
+          ease: "sine.in",
+          duration: 3,
+        },
+      });
+
+      // * SOLAR ECLIPSE START
+      introTL.current
+        .to(sunRef.current.position, {
+          x: limitlessEndX,
+          y: 0,
           z: 0,
-          repeat: -1,
-          duration: 20,
+          delay: 1,
           ease: "none",
-        });
-
-        // * TIMELINE CONFIG
-        introTL.current = gsap.timeline({
-          defaults: {
-            ease: "power2.in",
-            duration: 1,
-          },
-        });
-
-        // * STARS INTRO START
-        introTL.current
-          .from(starsRef.current.scale, {
-            x: 0,
-            y: 0,
-            z: 0,
-          })
-          .from(
-            starsRef.current.rotation,
-            {
-              x: 0,
-              y: Math.PI * 2,
-              z: 0,
-            },
-            "<"
-          )
-          // * STARS INTRO END
-
-          // * SOLAR ECLIPSE START
-          .to(
-            sunRef.current.scale,
-            {
-              x: limitlessScale,
-              y: limitlessScale,
-              z: limitlessScale,
-            },
-            "<"
-          )
-          .set(moonRef.current.scale, {
+          duration: 4,
+        })
+        .to(
+          sunRef.current.scale,
+          {
             x: limitlessScale,
             y: limitlessScale,
             z: limitlessScale,
-          })
-          .to(moonRef.current.position, {
-            x: 0,
+            duration: 1.5,
+            onStart: () => {
+              setAnimateSunBloom(true);
+            },
+          },
+          "<+=2.5"
+        )
+        .to(
+          planetsOrbitRef.current.scale,
+          {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: 3,
+          },
+          "<+=1"
+        )
+        .to(
+          planetsOrbitRef.current.position,
+          {
             y: 0,
-            z: 0,
-          })
-          .to(limitlessRef.current.position, {
-            x: limitlessEndX,
-            y: 0,
-            z: 0,
-          })
-          .to(limitlessTextRef.current, {
-            fillOpacity: 1,
-          });
-        // * SOLAR ECLIPSE END
-
-        // * PLANETS INTRO START
-        planets_data.forEach((element) => {
-          introTL.current.to(element.ref.current.scale, {
-            x: element.scale || 1,
-            y: element.scale || 1,
-            z: element.scale || 1,
-          });
-        });
-        // * PLANETS INTRO END
-      }
-    },
-    { scope: galaxyRef }
-  );
+            duration: 3,
+          },
+          "<"
+        )
+        .to(
+          starsRef.current.scale,
+          {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: 3,
+          },
+          "<"
+        )
+        .to(
+          planetsOrbitRef.current.rotation,
+          {
+            y: Math.PI * 4,
+            duration: 3,
+            onComplete: () => {
+              // * SHOW LIMITLESS TEXTS
+              setShowLimitlessText(true);
+              setTimeout(() => {
+                // * SHOW PLANETS TEXTS
+                setShowPlanetsText(true);
+                // * PLANETS ORBIT INFINITE ROTATION
+                gsap.to(planetsOrbitRef.current.rotation, {
+                  x: 0,
+                  y: Math.PI * 6,
+                  z: 0,
+                  repeat: -1,
+                  delay: 1,
+                  duration: 25,
+                  ease: "none",
+                });
+              }, 1500);
+            },
+          },
+          "<"
+        );
+    }
+  });
 
   return (
     <Suspense fallback={null}>
-      <group ref={galaxyRef}>
-        <Stars ref={starsRef} />
-        <group ref={limitlessRef} position={[0, 0, 0]}>
-          <Sun ref={sunRef} scale={0} />
-          <Moon ref={moonRef} scale={0} position={[3, 0, 0]} />
-          <Billboard>
-            <Text
-              ref={limitlessTextRef}
-              color="white"
-              anchorX="center"
-              anchorY="middle"
-              position={[0, 0, 1]}
-              transparent
-              fillOpacity={0}
-              fontSize={0.1}
-              // font={"/fonts/satoshi.otf"}
-            >
-              LIMITLESS
-            </Text>
-          </Billboard>
+      <SelectiveBloom animateBloom={animateSunBloom} />
+      <group ref={galaxyRef} scale={2.5}>
+        <Stars ref={starsRef} scale={5} />
+        <group ref={limitlessRef} position={[0, limitlessY, 0]}>
+          <Sun ref={sunRef} scale={limitlessScale * 0.5} position-y={0.3} />
+          <Moon
+            ref={moonRef}
+            scale={limitlessScale}
+            position-x={limitlessEndX}
+            showText={showLimitlessText}
+          />
         </group>
-        <group rotation={[-Math.PI / 1.15, 0, 0]} position={[0.5, 0, 0]}>
-          <group ref={planetsOrbitRef}>
+        <group rotation={[-Math.PI / 1.02, 0, 0]} position={[0.5, 0.5, 0]}>
+          <group ref={planetsOrbitRef} position-y={-1} scale={3}>
             {planets_data.map((planet, i) => (
               <Planet
                 ref={planet.ref}
@@ -192,7 +212,9 @@ const SceneWrapper = () => {
                   0,
                   Math.sin(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
                 ]}
-                scale={0}
+                radius={planet.radius}
+                scale={1}
+                showText={showPlanetsText}
               />
             ))}
           </group>
