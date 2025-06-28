@@ -88,7 +88,7 @@ const SceneWrapper = () => {
   // ! INTRO ANIMATION
   const introTL = useRef();
   const limitlessScale = 0.7;
-  const limitlessEndX = 2.5;
+  const limitlessEndX = 2;
   const limitlessY = -0.25;
 
   const bloomProps = {
@@ -101,40 +101,33 @@ const SceneWrapper = () => {
       // * TIMELINE CONFIG
       introTL.current = gsap.timeline({
         defaults: {
-          ease: "expo.inOut",
+          ease: "sine.in",
           duration: 3,
         },
       });
 
       // * SOLAR ECLIPSE START
       introTL.current
-        .from(sunRef.current.scale, {
-          x: 0,
-          y: 0,
-          z: 0,
-          duration: 2,
-        })
         .to(sunRef.current.position, {
           x: limitlessEndX,
           y: 0,
           z: 0,
-          // delay: 1,
-          // ease: "power1.inOut",
+          delay: 1,
+          ease: "none",
           duration: 4,
         })
         .to(
           sunRef.current.scale,
           {
-            x: limitlessScale * 0.95,
-            y: limitlessScale * 0.95,
-            z: limitlessScale * 0.95,
-            duration: 4,
+            x: limitlessScale,
+            y: limitlessScale,
+            z: limitlessScale,
+            duration: 1.5,
             onStart: () => {
               setAnimateSunBloom(true);
             },
           },
-          "<+=0.3"
-          // "<+=2.5"
+          "<+=2.5"
         )
         .to(
           planetsOrbitRef.current.scale,
@@ -144,7 +137,7 @@ const SceneWrapper = () => {
             z: 1,
             duration: 3,
           },
-          "<+=1.2"
+          "<+=1"
         )
         .to(
           planetsOrbitRef.current.position,
@@ -152,7 +145,7 @@ const SceneWrapper = () => {
             y: 0,
             duration: 3,
           },
-          "<+=0.2"
+          "<"
         )
         .to(
           starsRef.current.scale,
@@ -162,7 +155,7 @@ const SceneWrapper = () => {
             z: 1,
             duration: 3,
           },
-          "<+=0.2"
+          "<"
         )
         .to(
           planetsOrbitRef.current.rotation,
@@ -177,27 +170,19 @@ const SceneWrapper = () => {
                 setShowPlanetsText(true);
                 // * PLANETS ORBIT INFINITE ROTATION
                 gsap.to(planetsOrbitRef.current.rotation, {
-                  x: 0.1,
+                  x: 0,
                   y: Math.PI * 6,
-                  z: 0.1,
+                  z: 0,
                   repeat: -1,
                   delay: 1,
                   duration: 25,
-                  // ease: "none",
-                  ease: "sine.inOut",
+                  ease: "none",
                 });
-              }, 500);
+              }, 1500);
             },
           },
-          "<+=0.3"
+          "<"
         );
-
-      gsap.to(galaxyRef.current.rotation, {
-        y: "+=0.1",
-        repeat: -1,
-        duration: 20,
-        ease: "sine.inOut",
-      });
     }
   });
 

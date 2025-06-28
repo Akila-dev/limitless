@@ -24,8 +24,8 @@ export default function MainScene() {
       <ambientLight intensity={0.2} />
       <SceneWrapper />
       <Environment files="/env3.jpg" />
-      <OrbitControls enabled={false} />
-      {/* <OrbitControls /> */}
+      {/* <OrbitControls enabled={false} /> */}
+      <OrbitControls />
     </Canvas>
   );
 }

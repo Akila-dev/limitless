@@ -10,8 +10,8 @@ const Moon = (props) => {
         <meshStandardMaterial
           color="#000000" // deep black with a hint of tone
           metalness={1} // full metal
-          roughness={0.95}
-          // envMapIntensity={1}
+          roughness={0.85} // slight roughness = reflectivity with softness
+          envMapIntensity={1} // boost reflection visibility (needs environment map)
           toneMapped={true}
         />
       </mesh>

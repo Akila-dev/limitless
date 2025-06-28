@@ -34,27 +34,16 @@ const SelectiveBloom = ({ animateBloom }) => {
 
     gl.autoClear = false;
 
-    // if (animateBloom) {
-    //   // ✨ Animate bloom properties with GSAP timeline
-    //   const tl = gsap.timeline();
-    //   tl.to(_bloomPass, {
-    //     strength: 1.3,
-    //     radius: 0.9,
-    //     duration: 4, // Same as Sun's scale duration
-    //     ease: "sine.inOut",
-    //   });
-    //         gsap.to(bloomRef.current, {
-    //     strength: 2,
-    //     duration: 2,
-    //     ease: "sine.inOut",
-    //   })
-    // }
-
-    gsap.to(_bloomPass, {
-      strength: 2,
-      duration: 4,
-      ease: "sine.inOut",
-    });
+    if (animateBloom) {
+      // ✨ Animate bloom properties with GSAP timeline
+      const tl = gsap.timeline();
+      tl.to(_bloomPass, {
+        strength: 1.3,
+        radius: 0.9,
+        duration: 1.5, // Same as Sun's scale duration
+        ease: "sine.out",
+      });
+    }
   }, [gl, scene, camera, size, animateBloom]);
 
   useFrame(() => {
