@@ -114,7 +114,6 @@ const SceneWrapper = () => {
           y: 0,
           z: 0,
           duration: 2,
-          ease: "sine.inOut",
         })
         .to(sunRef.current.position, {
           x: limitlessEndX,

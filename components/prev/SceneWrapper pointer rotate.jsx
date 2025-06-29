@@ -20,10 +20,9 @@ const SceneWrapper = () => {
   const sunRef = useRef();
   const moonRef = useRef();
   const limitlessRef = useRef();
-  const limitlessTextRef = useRef();
 
   const planetsOrbitRef = useRef(); // Infinite rotation
-  const dragWrapperRef = useRef(); // Drag-based rotation
+  const dragWrapperRef = useRef(); // Hover rotation
 
   // ! PLANET REFS
   const planetRefs = Array.from({ length: 8 }, () => useRef());
@@ -45,58 +44,38 @@ const SceneWrapper = () => {
     { label: "ROADSHOW", radius: planetMid },
   ];
 
-  // ! INFINITE ROTATION
-  useFrame(() => {
-    if (planetsOrbitRef.current) {
-      planetsOrbitRef.current.rotation.y += 0.002; // Infinite spin
-    }
-  });
-
-  // ! DRAG INTERACTION
-  const isDragging = useRef(false);
-  const dragStartX = useRef(0);
-  const dragAngle = useRef(0);
+  // ! POINTER ROTATION STATE
   const dragVelocity = useRef(0);
+  const dragAngle = useRef(0);
 
   useEffect(() => {
-    const handlePointerDown = (e) => {
-      isDragging.current = true;
-      dragStartX.current = e.clientX;
-    };
-
     const handlePointerMove = (e) => {
-      if (!isDragging.current) return;
-      const deltaX = e.clientX - dragStartX.current;
-      dragVelocity.current = -deltaX * 0.0025; // sensitivity
-      dragStartX.current = e.clientX;
+      const centerX = window.innerWidth / 2;
+      const deltaX = (e.clientX - centerX) / centerX; // -1 to 1
+      dragVelocity.current = deltaX * 0.05; // Sensitivity
     };
 
-    const handlePointerUp = () => {
-      isDragging.current = false;
-    };
-
-    window.addEventListener("pointerdown", handlePointerDown);
     window.addEventListener("pointermove", handlePointerMove);
-    window.addEventListener("pointerup", handlePointerUp);
-
-    return () => {
-      window.removeEventListener("pointerdown", handlePointerDown);
-      window.removeEventListener("pointermove", handlePointerMove);
-      window.removeEventListener("pointerup", handlePointerUp);
-    };
+    return () => window.removeEventListener("pointermove", handlePointerMove);
   }, []);
 
+  // ! FRAME LOOP
   useFrame(() => {
-    // Apply drag velocity to outer group
+    // Inertia-based drag rotation
     dragAngle.current += dragVelocity.current;
-    dragVelocity.current *= 0.9; // Inertia decay
+    dragVelocity.current *= 0.9;
 
     if (dragWrapperRef.current) {
       dragWrapperRef.current.rotation.y = dragAngle.current;
     }
+
+    // Infinite planet orbit spin
+    if (planetsOrbitRef.current) {
+      planetsOrbitRef.current.rotation.y += 0.002;
+    }
   });
 
-  // ! GSAP INTRO
+  // ! GSAP INTRO ANIMATION
   const introTL = useRef();
   const limitlessScale = 0.7;
   const limitlessEndX = 2.5;
@@ -114,7 +93,6 @@ const SceneWrapper = () => {
           y: 0,
           z: 0,
           duration: 2,
-          ease: "sine.inOut",
         })
         .to(sunRef.current.position, {
           x: limitlessEndX,
@@ -155,7 +133,7 @@ const SceneWrapper = () => {
           "<+=0.3"
         );
 
-      // Galaxy background rotation
+      // Background & orbit wobble
       gsap.to(galaxyRef.current.rotation, {
         y: "+=0.1",
         repeat: -1,
@@ -164,7 +142,6 @@ const SceneWrapper = () => {
         ease: "sine.inOut",
       });
 
-      // Optional orbit wobble
       gsap.to(planetsOrbitRef.current.rotation, {
         x: -0.01,
         z: -0.01,
@@ -191,10 +168,10 @@ const SceneWrapper = () => {
           />
         </group>
 
-        {/* DRAG WRAPPER */}
+        {/* POINTER CONTROLLED ROTATION */}
         <group rotation={[-Math.PI / 1.02, 0, 0]} position={[0.6, 0.5, 0]}>
           <group ref={dragWrapperRef}>
-            {/* INNER ORBIT (INFINITE ROTATION) */}
+            {/* INNER INFINITE ROTATION */}
             <group ref={planetsOrbitRef} position-y={-1} scale={3}>
               {planets_data.map((planet, i) => (
                 <Planet
