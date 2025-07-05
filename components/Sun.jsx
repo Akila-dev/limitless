@@ -1,23 +1,26 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const Sun = (props) => {
+  const ref = useRef();
   useEffect(() => {
-    props.ref.current.layers.set(1); // Assign this mesh to bloom layer
+    ref.current.layers.set(1); // Assign this mesh to bloom layer
   }, []);
 
   return (
     <mesh {...props}>
-      <sphereGeometry args={[1, 64, 64]} />
-      <meshStandardMaterial
-        color="white"
-        emissive="white"
-        emissiveIntensity={50}
-        toneMapped={false}
-        transparent={true}
-        opacity={1}
-      />
+      <mesh ref={ref}>
+        <sphereGeometry args={[1, 64, 64]} />
+        <meshStandardMaterial
+          color="white"
+          emissive="white"
+          emissiveIntensity={50}
+          toneMapped={false}
+          transparent={true}
+          opacity={1}
+        />
+      </mesh>
     </mesh>
   );
 };

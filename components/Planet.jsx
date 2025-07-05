@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Points, PointMaterial } from "@react-three/drei";
@@ -11,7 +13,7 @@ export default function Planet(props) {
   const light_color = "#ffffff";
 
   const count = 1000;
-  const radius = props.radius;
+  const radius = props.radius || 2.35;
   const points = useMemo(() => {
     const positions = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
@@ -37,7 +39,7 @@ export default function Planet(props) {
       <Points ref={sphereRef1} positions={points} stride={3}>
         <PointMaterial
           color={light_color}
-          size={0.04}
+          size={props.largeDots ? 0.08 : 0.04}
           sizeAttenuation
           depthWrite={false}
           transparent
@@ -47,7 +49,7 @@ export default function Planet(props) {
       <Points ref={sphereRef2} positions={points} stride={3}>
         <PointMaterial
           color={light_color}
-          size={0.02}
+          size={props.largeDots ? 0.05 : 0.02}
           sizeAttenuation
           depthWrite={false}
           transparent

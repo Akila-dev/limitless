@@ -11,7 +11,7 @@ import * as THREE from "three";
 
 import { SceneWrapper } from "@/components";
 
-export default function MainScene() {
+export default function HomeCanvas() {
   return (
     <Canvas
       style={{ background: "black", height: "100vh", width: "100vw" }}

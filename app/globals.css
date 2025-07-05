@@ -1,19 +1,129 @@
-@import 'tailwindcss';
+@import url("https://fonts.googleapis.com/css2?family=Baskervville:ital,wght@0,400..700;1,400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+
+@import "tailwindcss";
 
 :root {
-	--background: #ffffff;
-	--foreground: #171717;
+  --background: #000000;
+  --foreground: #dfdfdf;
 }
 
 @theme inline {
-	--color-background: var(--background);
-	--color-foreground: var(--foreground);
-	--font-sans: var(--font-geist-sans);
-	--font-mono: var(--font-geist-mono);
+  --color-bg: var(--background);
+  --color-fg: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --spacing: 1em;
+  --radius: 1em;
+  --breakpoint-xs: 360px;
+
+  --font-base: "Montserrat", sans-serif;
+  --font-heading: "Baskervville", serif;
 }
 
 body {
-	background: var(--background);
-	color: var(--foreground);
-	font-family: Arial, Helvetica, sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  @apply font-base leading-[150%];
+}
+
+h1,
+h2 {
+  @apply font-heading font-semibold;
+}
+
+h1,
+.h1 {
+  @apply text-[12.5vw] xs:text-[40px] sm:text-[6vw] md:text-[6vw] lg:text-[4.5vw] leading-[100%];
+}
+
+h2,
+.h2 {
+  @apply text-[9vw] xs:text-xl sm:text-[6vw] md:text-[5.5vw] lg:text-[3.75vw] leading-[120%];
+}
+
+h3,
+.h3 {
+  @apply text-[5.5vw] xs:text-xl sm:text-[3.5vw] md:text-[3vw] lg:text-[2vw] font-medium font-heading;
+}
+
+.p-lg {
+  @apply text-[4vw] xs:text-base md:text-[2vw] lg:text-[1.5vw] leading-[150%] !font-light font-heading;
+}
+p,
+a,
+button,
+input,
+.p,
+div,
+label,
+textarea {
+  @apply text-[3.65vw] xs:text-sm md:text-[1.8vw] lg:text-[1.2vw] leading-[150%] !font-light;
+}
+.xs {
+  @apply text-[3.2vw] xs:text-xs md:text-[1.5vw] lg:text-[1vw] leading-[150%] !font-light;
+}
+
+/* UTILITIES */
+.container,
+.container-x {
+  @apply px-1.25 md:px-4 xl:px-5 max-w-screen;
+}
+
+.container,
+.container-y {
+  @apply py-4 xl:py-5 max-w-screen;
+}
+
+.pb {
+  @apply pb-4 xl:pb-5;
+}
+
+.flex-center {
+  @apply flex justify-center items-center gap-1;
+}
+
+.flex-v-center {
+  @apply flex items-center gap-0.5 lg:gap-0.75;
+}
+
+.flex-between {
+  @apply flex justify-between items-center gap-1;
+}
+
+.grid-2 {
+  @apply grid md:grid-cols-2 lg:grid-cols-5 gap-1;
+}
+
+.grid-2 div:nth-child(1) {
+  @apply lg:col-span-2;
+}
+
+.grid-2 div:nth-child(2) {
+  @apply lg:col-span-3;
+}
+
+.grid-2-v2 {
+  @apply grid md:grid-cols-2 gap-3 lg:gap-5;
+}
+
+.max-w {
+  @apply max-w-screen md:max-w-[70vw] xl:max-w-[60vw];
+}
+
+.max-w-2 {
+  @apply max-w-[80vw] md:max-w-[50vw] xl:max-w-[40vw];
+}
+
+/* * BUTTONS */
+.btn {
+  @apply py-0.5 px-2 uppercase border-[0.1em] rounded-[1em] font-medium;
+}
+.clip-bg {
+  @apply absolute translate-y-[-50%] translate-x-[-50%] top-[200px] left-[50%] w-[400px] h-[400px] rounded-full bg-white scale-0;
+}
+
+.btn-1 {
+  @apply py-0.5 px-2 uppercase border-[0.1em] rounded-[1em];
 }

@@ -4,7 +4,6 @@ import { useRef, Suspense, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { useRouter } from "next/navigation";
 
 import { Stars, Sun, Moon, Planet, SelectiveBloom } from "@/components";
 
@@ -15,16 +14,18 @@ const SceneWrapper = () => {
   const [showLimitlessText, setShowLimitlessText] = useState(false);
   const [showPlanetsText, setShowPlanetsText] = useState(false);
 
-  const router = useRouter();
-
+  // ! REFS
   const galaxyRef = useRef();
   const starsRef = useRef();
   const sunRef = useRef();
   const moonRef = useRef();
   const limitlessRef = useRef();
-  const planetsOrbitRef = useRef();
-  const dragWrapperRef = useRef();
+  const limitlessTextRef = useRef();
 
+  const planetsOrbitRef = useRef(); // Infinite rotation
+  const dragWrapperRef = useRef(); // Drag-based rotation
+
+  // ! PLANET REFS
   const planetRefs = Array.from({ length: 8 }, () => useRef());
 
   const orbitRadius = 2.5;
@@ -44,12 +45,14 @@ const SceneWrapper = () => {
     { label: "ROADSHOW", radius: planetMid },
   ];
 
+  // ! INFINITE ROTATION
   useFrame(() => {
     if (planetsOrbitRef.current) {
-      planetsOrbitRef.current.rotation.y += 0.002;
+      planetsOrbitRef.current.rotation.y += 0.002; // Infinite spin
     }
   });
 
+  // ! DRAG INTERACTION
   const isDragging = useRef(false);
   const dragStartX = useRef(0);
   const dragAngle = useRef(0);
@@ -60,12 +63,14 @@ const SceneWrapper = () => {
       isDragging.current = true;
       dragStartX.current = e.clientX;
     };
+
     const handlePointerMove = (e) => {
       if (!isDragging.current) return;
       const deltaX = e.clientX - dragStartX.current;
-      dragVelocity.current = -deltaX * 0.0005;
+      dragVelocity.current = -deltaX * 0.0025; // sensitivity
       dragStartX.current = e.clientX;
     };
+
     const handlePointerUp = () => {
       isDragging.current = false;
     };
@@ -82,38 +87,16 @@ const SceneWrapper = () => {
   }, []);
 
   useFrame(() => {
+    // Apply drag velocity to outer group
     dragAngle.current += dragVelocity.current;
-    dragVelocity.current *= 0.9;
+    dragVelocity.current *= 0.9; // Inertia decay
+
     if (dragWrapperRef.current) {
       dragWrapperRef.current.rotation.y = dragAngle.current;
     }
   });
 
-  const handleMoonClick = () => {
-    const tl = gsap.timeline({
-      defaults: { duration: 1.2, ease: "expo.inOut" },
-      onComplete: () => router.push("/limitless"),
-    });
-
-    if (dragWrapperRef.current) {
-      tl.to(dragWrapperRef.current.position, { y: -5 }, "<")
-        .to(dragWrapperRef.current.scale, { x: 0.1, y: 0.1, z: 0.1 }, "<")
-        .to(dragWrapperRef.current.rotation, { y: "+=1" }, "<");
-    }
-    // if (galaxyRef.current) {
-    //   tl.to(galaxyRef.current.scale, { x: 0.5, y: 0.5, z: 0.5 }, "<");
-    // }
-    if (moonRef.current) {
-      gsap.to(moonRef.current.scale, {
-        x: 0.9,
-        y: 0.9,
-        z: 0.9,
-        duration: 1,
-        ease: "power2.out",
-      });
-    }
-  };
-
+  // ! GSAP INTRO
   const introTL = useRef();
   const limitlessScale = 0.7;
   const limitlessEndX = 2.5;
@@ -126,7 +109,12 @@ const SceneWrapper = () => {
       });
 
       introTL.current
-        .from(sunRef.current.scale, { x: 0, y: 0, z: 0, duration: 2 })
+        .from(sunRef.current.scale, {
+          x: 0,
+          y: 0,
+          z: 0,
+          duration: 2,
+        })
         .to(sunRef.current.position, {
           x: limitlessEndX,
           y: 0,
@@ -158,12 +146,15 @@ const SceneWrapper = () => {
             duration: 3,
             onComplete: () => {
               setShowLimitlessText(true);
-              setTimeout(() => setShowPlanetsText(true), 500);
+              setTimeout(() => {
+                setShowPlanetsText(true);
+              }, 500);
             },
           },
           "<+=0.3"
         );
 
+      // Galaxy background rotation
       gsap.to(galaxyRef.current.rotation, {
         y: "+=0.1",
         repeat: -1,
@@ -172,6 +163,7 @@ const SceneWrapper = () => {
         ease: "sine.inOut",
       });
 
+      // Optional orbit wobble
       gsap.to(planetsOrbitRef.current.rotation, {
         x: -0.01,
         z: -0.01,
@@ -195,11 +187,13 @@ const SceneWrapper = () => {
             scale={limitlessScale}
             position-x={limitlessEndX}
             showText={showLimitlessText}
-            onClick={handleMoonClick}
           />
         </group>
+
+        {/* DRAG WRAPPER */}
         <group rotation={[-Math.PI / 1.02, 0, 0]} position={[0.6, 0.5, 0]}>
           <group ref={dragWrapperRef}>
+            {/* INNER ORBIT (INFINITE ROTATION) */}
             <group ref={planetsOrbitRef} position-y={-1} scale={3}>
               {planets_data.map((planet, i) => (
                 <Planet

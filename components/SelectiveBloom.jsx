@@ -38,16 +38,11 @@ const SelectiveBloom = ({ animateBloom }) => {
       // ✨ Animate bloom properties with GSAP timeline
       const tl = gsap.timeline();
       tl.to(_bloomPass, {
-        strength: 1.3,
-        radius: 0.9,
+        strength: 2,
+        // radius: 0.9,
         duration: 4, // Same as Sun's scale duration
         ease: "sine.inOut",
       });
-      // gsap.to(bloomRef.current, {
-      //   strength: 2,
-      //   duration: 2,
-      //   ease: "sine.inOut",
-      // });
     }
 
     // gsap.to(_bloomPass, {
