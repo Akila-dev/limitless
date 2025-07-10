@@ -243,7 +243,7 @@ const SceneWrapper = ({ data }) => {
               scale={limitlessScale}
               position-x={limitlessEndX}
               showText={showLimitlessText}
-              onClick={handleMoonClick}
+              onClick={() => handleMoonClick()}
             />
           </group>
           <group rotation={[-Math.PI / 1.02, 0, 0]} position={[0.6, 0.5, 0]}>
