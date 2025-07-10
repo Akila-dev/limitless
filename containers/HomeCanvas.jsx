@@ -11,7 +11,7 @@ import * as THREE from "three";
 
 import { SceneWrapper } from "@/components";
 
-export default function HomeCanvas() {
+export default function HomeCanvas({ data }) {
   return (
     <Canvas
       style={{ background: "black", height: "100vh", width: "100vw" }}
@@ -22,7 +22,7 @@ export default function HomeCanvas() {
       <fog attach="fog" args={["#000000", 15, 20]} />
 
       <ambientLight intensity={0.2} />
-      <SceneWrapper />
+      <SceneWrapper data={data} />
       <Environment files="/env3.jpg" />
       <OrbitControls enabled={false} />
       {/* <OrbitControls /> */}

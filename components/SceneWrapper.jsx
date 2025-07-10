@@ -10,22 +10,23 @@ import { Stars, Sun, Moon, Planet, SelectiveBloom } from "@/components";
 
 gsap.registerPlugin(useGSAP);
 
-const SceneWrapper = () => {
+const SceneWrapper = ({ data }) => {
   const [animateSunBloom, setAnimateSunBloom] = useState(false);
   const [showLimitlessText, setShowLimitlessText] = useState(false);
   const [showPlanetsText, setShowPlanetsText] = useState(false);
 
   const router = useRouter();
 
-  const galaxyRef = useRef();
-  const starsRef = useRef();
-  const sunRef = useRef();
-  const moonRef = useRef();
-  const limitlessRef = useRef();
-  const planetsOrbitRef = useRef();
-  const dragWrapperRef = useRef();
+  const container = useRef(null);
+  const galaxyRef = useRef(null);
+  const starsRef = useRef(null);
+  const sunRef = useRef(null);
+  const moonRef = useRef(null);
+  const limitlessRef = useRef(null);
+  const planetsOrbitRef = useRef(null);
+  const dragWrapperRef = useRef(null);
 
-  const planetRefs = Array.from({ length: 8 }, () => useRef());
+  const planetRefs = Array.from({ length: 8 }, () => useRef(null));
 
   const orbitRadius = 2.5;
   const orbitVal = 0.001;
@@ -33,23 +34,32 @@ const SceneWrapper = () => {
   const planetSM = planetRad * 0.8;
   const planetMid = planetRad * 0.9;
 
-  const planets_data = [
-    { label: "THINK TANK", radius: planetRad },
-    { label: "LAB", radius: planetSM },
-    { label: "THINK TANK", radius: planetRad },
-    { label: "THINK TANK", radius: planetMid },
-    { label: "THINK TANK", radius: planetRad },
-    { label: "THINK TANK", radius: planetRad },
-    { label: "THINK TANK", radius: planetSM },
-    { label: "ROADSHOW", radius: planetMid },
-  ];
+  const planets_data = data.map((planet) => {
+    let newPlanet = { ...planet };
+    planet.name && planet.name.length < 3
+      ? (newPlanet = { ...planet, radius: planetSM })
+      : planet.name && planet.name.length > 3 && planet.name.length < 6
+        ? (newPlanet = { ...planet, radius: planetMid })
+        : (newPlanet = { ...planet, radius: planetRad });
+    return newPlanet;
+  });
 
+  // ! DRAG AND PLANETS ORBIT
   useFrame(() => {
+    dragAngle.current += dragVelocity.current;
+    dragVelocity.current *= 0.9;
+    if (dragWrapperRef.current) {
+      dragWrapperRef.current.rotation.y = dragAngle.current;
+    }
+
     if (planetsOrbitRef.current) {
       planetsOrbitRef.current.rotation.y += 0.002;
     }
   });
 
+  // ! DRAG EVENT
+  // ! DRAG EVENT
+  // ! DRAG EVENT
   const isDragging = useRef(false);
   const dragStartX = useRef(0);
   const dragAngle = useRef(0);
@@ -81,15 +91,11 @@ const SceneWrapper = () => {
     };
   }, []);
 
-  useFrame(() => {
-    dragAngle.current += dragVelocity.current;
-    dragVelocity.current *= 0.9;
-    if (dragWrapperRef.current) {
-      dragWrapperRef.current.rotation.y = dragAngle.current;
-    }
-  });
-
-  const handleMoonClick = () => {
+  // ! MOON CLICK EVENT
+  // ! MOON CLICK EVENT
+  // ! MOON CLICK EVENT
+  const { contextSafe } = useGSAP({ scope: container });
+  const handleMoonClick = contextSafe(() => {
     const tl = gsap.timeline({
       defaults: { duration: 1.2, ease: "expo.inOut" },
       onComplete: () => router.push("/limitless"),
@@ -112,15 +118,54 @@ const SceneWrapper = () => {
         ease: "power2.out",
       });
     }
-  };
+  });
 
-  const introTL = useRef();
+  // ! PLANET CLICK EVENT
+  // ! PLANET CLICK EVENT
+  // ! PLANET CLICK EVENT
+  const handlePlanetClick = contextSafe((i, slug) => {
+    const tl = gsap.timeline({
+      defaults: { duration: 1.2, ease: "expo.inOut" },
+      onComplete: () => router.push(`/page/${slug}`),
+    });
+
+    if (dragWrapperRef.current) {
+      tl.to(dragWrapperRef.current.position, { y: -5 }, "<")
+        .to(dragWrapperRef.current.scale, { x: 0.1, y: 0.1, z: 0.1 }, "<")
+        .to(dragWrapperRef.current.rotation, { y: "+=1" }, "<");
+    }
+    // if (galaxyRef.current) {
+    //   tl.to(galaxyRef.current.scale, { x: 0.5, y: 0.5, z: 0.5 }, "<");
+    // }
+    if (moonRef.current) {
+      gsap.to(moonRef.current.scale, {
+        x: 0.9,
+        y: 0.9,
+        z: 0.9,
+        duration: 1,
+        ease: "power2.out",
+      });
+    }
+  });
+
+  // ! INTRO ANIMATION
+  // ! INTRO ANIMATION
+  // ! INTRO ANIMATION
+  const introTL = useRef(null);
   const limitlessScale = 0.7;
   const limitlessEndX = 2.5;
   const limitlessY = -0.25;
 
-  useGSAP(() => {
-    if (introTL && starsRef && planetsOrbitRef) {
+  useGSAP(
+    () => {
+      // if (
+      //   introTL.current &&
+      //   starsRef.current &&
+      //   planetsOrbitRef.current &&
+      //   sunRef.current &&
+      //   moonRef.current &&
+      //   limitlessRef.current
+      // ) {
       introTL.current = gsap.timeline({
         defaults: { ease: "expo.inOut", duration: 3 },
       });
@@ -180,42 +225,47 @@ const SceneWrapper = () => {
         duration: 5,
         ease: "sine.inOut",
       });
-    }
-  });
+      // }
+    },
+    { scope: container }
+  );
 
   return (
     <Suspense fallback={null}>
       <SelectiveBloom animateBloom={animateSunBloom} />
-      <group ref={galaxyRef} scale={2.5}>
-        <Stars ref={starsRef} scale={5} />
-        <group ref={limitlessRef} position={[0, limitlessY, 0]}>
-          <Sun ref={sunRef} scale={limitlessScale * 0.5} position-y={0.3} />
-          <Moon
-            ref={moonRef}
-            scale={limitlessScale}
-            position-x={limitlessEndX}
-            showText={showLimitlessText}
-            onClick={handleMoonClick}
-          />
-        </group>
-        <group rotation={[-Math.PI / 1.02, 0, 0]} position={[0.6, 0.5, 0]}>
-          <group ref={dragWrapperRef}>
-            <group ref={planetsOrbitRef} position-y={-1} scale={3}>
-              {planets_data.map((planet, i) => (
-                <Planet
-                  ref={planetRefs[i]}
-                  key={i}
-                  label={planet.label}
-                  position={[
-                    Math.cos(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
-                    0,
-                    Math.sin(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
-                  ]}
-                  radius={planet.radius}
-                  scale={1}
-                  showText={showPlanetsText}
-                />
-              ))}
+      <group ref={container}>
+        <group ref={galaxyRef} scale={2.5}>
+          <Stars ref={starsRef} scale={5} />
+          <group ref={limitlessRef} position={[0, limitlessY, 0]}>
+            <Sun ref={sunRef} scale={limitlessScale * 0.5} position-y={0.3} />
+            <Moon
+              ref={moonRef}
+              scale={limitlessScale}
+              position-x={limitlessEndX}
+              showText={showLimitlessText}
+              onClick={handleMoonClick}
+            />
+          </group>
+          <group rotation={[-Math.PI / 1.02, 0, 0]} position={[0.6, 0.5, 0]}>
+            <group ref={dragWrapperRef}>
+              <group ref={planetsOrbitRef} position-y={-1} scale={3}>
+                {planets_data.map((planet, i) => (
+                  <Planet
+                    ref={planetRefs[i]}
+                    key={i}
+                    label={planet.name}
+                    position={[
+                      Math.cos(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
+                      0,
+                      Math.sin(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
+                    ]}
+                    radius={planet.radius}
+                    scale={1}
+                    showText={showPlanetsText}
+                    onClick={() => handlePlanetClick(i, planet.slug.current)}
+                  />
+                ))}
+              </group>
             </group>
           </group>
         </group>

@@ -15,7 +15,6 @@ const Stars = (props) => {
         radius: props.radius ? props.radius : 6,
       })
     );
-    console.log(sphere);
   }, []);
 
   useFrame((state, delta) => {
