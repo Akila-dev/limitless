@@ -54,7 +54,7 @@ const Button = ({ text, href, onClick }) => {
       onMouseEnter={() => hovering()}
       onMouseLeave={() => hoverOut()}
       href={href}
-      className="btn relative group overflow-hidden"
+      className="btn relative group !overflow-hidden"
       ref={container}
     >
       <span className="clip-bg"></span>

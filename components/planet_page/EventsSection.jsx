@@ -1,6 +1,7 @@
 import React from "react";
 
-import { PlanetCanvas, Text4R3F, EventsCarousel } from "@/components";
+import { PlanetCanvas, Text4R3F } from "@/components";
+import { EventsCarousel } from "@/containers";
 
 const EventsSection = ({ text }) => {
   return (

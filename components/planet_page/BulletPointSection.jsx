@@ -6,7 +6,7 @@ const BulletPointSection = ({ text, bullet_list }) => {
   return (
     <div className="container">
       <div className="grid-2-v2">
-        <div>
+        <div className="md:pb-4">
           <Text4R3F
             title={text.title}
             paragraph={text.paragraph}

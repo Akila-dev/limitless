@@ -9,7 +9,7 @@ const BulletList = ({ data }) => {
   return (
     <div className="space-y-0.5" ref={container}>
       {data &&
-        data.map(({ heading, desc }, i) => (
+        data.map(({ title, description }, i) => (
           <div
             key={i}
             className={`gsap-list flex-v-center ${
@@ -24,8 +24,8 @@ const BulletList = ({ data }) => {
               className="w-5.5 h-auto object-contain"
             />
             <div className="pt-0.5">
-              <h3>{heading}</h3>
-              <p className="xs">{desc}</p>
+              <h3>{title}</h3>
+              <p className="xs">{description}</p>
             </div>
           </div>
         ))}

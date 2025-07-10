@@ -19,40 +19,12 @@ function Scene({ direction }) {
         direction === "right"
           ? [w > h ? 0.5 : 1.25, w > h ? 0.8 : 0.2, 0]
           : direction === "left"
-          ? [window.innerWidth >= 1024 ? -0.75 : -1.15, 0, -0.55]
-          : [0, 0, -1]
+            ? [window.innerWidth >= 1024 ? -0.75 : -1.15, 0, -0.55]
+            : [0, 0, -1]
       }
     />
   );
 }
-
-// function Scene({ direction }) {
-//   const { width: w, height: h } = useThree((state) => state.viewport);
-//   return w > h ? (
-//     <Planet
-//       largeDots
-//       position={
-//         direction === "right"
-//           ? [0.5, 0.8, 0]
-//           : direction === "left"
-//           ? [0, 0, -10]
-//           : [0, 0, 0]
-//       }
-//     />
-//   ) : (
-//     <Planet
-//       largeDots
-//       scale={0.5}
-//       position={
-//         direction === "right"
-//           ? [0.5, 0.8, 0]
-//           : direction === "left"
-//           ? [0, 0, -10]
-//           : [0, 0, 0]
-//       }
-//     />
-//   );
-// }
 
 export default function PlanetCanvas({ direction }) {
   return (
