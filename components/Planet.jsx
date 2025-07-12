@@ -66,9 +66,21 @@ export default function Planet(props) {
     sphereRef2.current.rotation.y += delta / 12;
   });
 
+  const onPointerOver = () => {
+    props.onPOver && props.onPOver();
+  };
+
+  const onPointerOut = () => {
+    props.onPOut && props.onPOut();
+  };
+
   return (
     <mesh {...props}>
-      <mesh ref={sphereContainerRef}>
+      <mesh
+        ref={sphereContainerRef}
+        onPointerOver={onPointerOver}
+        onPointerOut={onPointerOut}
+      >
         <Points ref={sphereRef1} positions={points} stride={3}>
           <PointMaterial
             color={light_color}
@@ -89,13 +101,15 @@ export default function Planet(props) {
           />
         </Points>
       </mesh>
-      <BillboardText
-        text={props.label}
-        color={light_color}
-        fontSize={0.06}
-        position={[0, -radius * 1.3, 0]}
-        showText={props.showText}
-      />
+      {props.label && (
+        <BillboardText
+          text={props.label ? props.label.toUpperCase() : ""}
+          color={light_color}
+          fontSize={0.06}
+          position={[0, -radius * 1.3, 0]}
+          showText={props.showText}
+        />
+      )}
     </mesh>
   );
 }

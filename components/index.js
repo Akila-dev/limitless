@@ -14,6 +14,7 @@ export { default as ForumBlock } from "./ForumBlock.jsx";
 export { default as BulletList } from "./BulletList.jsx";
 export { default as Button } from "./Button.jsx";
 export { default as Logo } from "./Logo.jsx";
+export { default as LimitlessCanvas } from "./LimitlessCanvas.jsx";
 export { default as PlanetCanvas } from "./PlanetCanvas.jsx";
 export { default as StarsCanvas } from "./StarsCanvas.jsx";
 export { default as EmptyData } from "./EmptyData.jsx";

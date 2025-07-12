@@ -14,6 +14,7 @@ const SceneWrapper = ({ data }) => {
   const [animateSunBloom, setAnimateSunBloom] = useState(false);
   const [showLimitlessText, setShowLimitlessText] = useState(false);
   const [showPlanetsText, setShowPlanetsText] = useState(false);
+  const [hoveringMesh, setHoveringMesh] = useState(false);
 
   const router = useRouter();
 
@@ -26,7 +27,11 @@ const SceneWrapper = ({ data }) => {
   const planetsOrbitRef = useRef(null);
   const dragWrapperRef = useRef(null);
 
-  const planetRefs = Array.from({ length: 8 }, () => useRef(null));
+  const { contextSafe } = useGSAP({ scope: container });
+
+  const planetRefs = Array.from({ length: data.length || 8 }, () =>
+    useRef(null)
+  );
 
   const orbitRadius = 2.5;
   const orbitVal = 0.001;
@@ -44,6 +49,60 @@ const SceneWrapper = ({ data }) => {
     return newPlanet;
   });
 
+  // ! HOVER EVENTS
+  // ! HOVER EVENTS
+  // ! HOVER EVENTS
+  // * CURSOR-POINTER
+  useEffect(() => {
+    document.body.style.cursor = hoveringMesh ? "pointer" : "default";
+    return () => (document.body.style.cursor = "default");
+  }, [hoveringMesh]);
+
+  // * HOVER LIMITLESS
+  const handleLimitlessHover = contextSafe(() => {
+    setHoveringMesh(true);
+    gsap
+      .timeline({ defaults: { duration: 1, ease: "power2.out" } })
+      .to(limitlessRef.current.scale, {
+        x: 1.1,
+        y: 1.1,
+        z: 1.1,
+      })
+      .to(
+        limitlessRef.current.position,
+        {
+          x: -0.3,
+        },
+        "<"
+      );
+  });
+  const handleLimitlessLeave = contextSafe(() => {
+    setHoveringMesh(false);
+    gsap
+      .timeline({ defaults: { duration: 1, ease: "power2.out" } })
+      .to(limitlessRef.current.scale, {
+        x: 1,
+        y: 1,
+        z: 1,
+      })
+      .to(
+        limitlessRef.current.position,
+        {
+          x: 0,
+        },
+        "<"
+      );
+  });
+  // * HOVER PLANETS
+  const handlePlanetsHover = contextSafe((i) => {
+    setHoveringMesh(true);
+  });
+  const handlePlanetsLeave = contextSafe((i) => {
+    setHoveringMesh(false);
+  });
+
+  // ! DRAG AND PLANETS ORBIT
+  // ! DRAG AND PLANETS ORBIT
   // ! DRAG AND PLANETS ORBIT
   useFrame(() => {
     dragAngle.current += dragVelocity.current;
@@ -94,7 +153,6 @@ const SceneWrapper = ({ data }) => {
   // ! MOON CLICK EVENT
   // ! MOON CLICK EVENT
   // ! MOON CLICK EVENT
-  const { contextSafe } = useGSAP({ scope: container });
   const handleMoonClick = contextSafe(() => {
     const tl = gsap.timeline({
       defaults: { duration: 1.2, ease: "expo.inOut" },
@@ -158,20 +216,28 @@ const SceneWrapper = ({ data }) => {
 
   useGSAP(
     () => {
-      // if (
-      //   introTL.current &&
-      //   starsRef.current &&
-      //   planetsOrbitRef.current &&
-      //   sunRef.current &&
-      //   moonRef.current &&
-      //   limitlessRef.current
-      // ) {
+      if (
+        !galaxyRef.current ||
+        !starsRef.current ||
+        !planetsOrbitRef.current ||
+        !sunRef.current ||
+        !moonRef.current ||
+        !limitlessRef.current
+      ) {
+        return;
+      }
+
       introTL.current = gsap.timeline({
         defaults: { ease: "expo.inOut", duration: 3 },
       });
 
       introTL.current
-        .from(sunRef.current.scale, { x: 0, y: 0, z: 0, duration: 2 })
+        .to(sunRef.current.scale, {
+          x: limitlessScale * 0.5,
+          y: limitlessScale * 0.5,
+          z: limitlessScale * 0.5,
+          duration: 2,
+        })
         .to(sunRef.current.position, {
           x: limitlessEndX,
           y: 0,
@@ -225,9 +291,11 @@ const SceneWrapper = ({ data }) => {
         duration: 5,
         ease: "sine.inOut",
       });
-      // }
     },
-    { scope: container }
+    {
+      scope: container,
+      dependencies: [sunRef],
+    }
   );
 
   return (
@@ -237,13 +305,15 @@ const SceneWrapper = ({ data }) => {
         <group ref={galaxyRef} scale={2.5}>
           <Stars ref={starsRef} scale={5} />
           <group ref={limitlessRef} position={[0, limitlessY, 0]}>
-            <Sun ref={sunRef} scale={limitlessScale * 0.5} position-y={0.3} />
+            <Sun ref={sunRef} scale={0} position-y={0.3} />
             <Moon
               ref={moonRef}
               scale={limitlessScale}
               position-x={limitlessEndX}
               showText={showLimitlessText}
               onClick={() => handleMoonClick()}
+              onPointerOver={() => handleLimitlessHover()}
+              onPointerLeave={() => handleLimitlessLeave()}
             />
           </group>
           <group rotation={[-Math.PI / 1.02, 0, 0]} position={[0.6, 0.5, 0]}>
@@ -263,6 +333,8 @@ const SceneWrapper = ({ data }) => {
                     scale={1}
                     showText={showPlanetsText}
                     onClick={() => handlePlanetClick(i, planet.slug.current)}
+                    // onPOver={() => handlePlanetsHover(i)}
+                    // onPLeave={() => handlePlanetsLeave(i)}
                   />
                 ))}
               </group>
