@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
-export const useIntroAnimationStore = create((set) => ({
-  completed: false,
-  setIntroAnimationAsCompleted: () => set((state) => ({ completed: true })),
+export const useIntroStore = create((set) => ({
+  introFinished: false,
+  setIntroFinished: () => set({ introFinished: true }),
+  setIntroStarted: () => set({ introFinished: false }),
 }));

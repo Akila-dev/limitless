@@ -66,20 +66,20 @@ export default function Planet(props) {
     sphereRef2.current.rotation.y += delta / 12;
   });
 
-  const onPointerOver = () => {
-    props.onPOver && props.onPOver();
-  };
+  // const onPointerOver = () => {
+  //   props.onPOver && props.onPOver();
+  // };
 
-  const onPointerOut = () => {
-    props.onPOut && props.onPOut();
-  };
+  // const onPointerOut = () => {
+  //   props.onPOut && props.onPOut();
+  // };
 
   return (
     <mesh {...props}>
       <mesh
         ref={sphereContainerRef}
-        onPointerOver={onPointerOver}
-        onPointerOut={onPointerOut}
+        // onPointerOver={onPointerOver}
+        // onPointerOut={onPointerOut}
       >
         <Points ref={sphereRef1} positions={points} stride={3}>
           <PointMaterial

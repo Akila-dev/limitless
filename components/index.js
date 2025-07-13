@@ -1,5 +1,5 @@
-// SCENES
-export { default as SceneWrapper } from "./SceneWrapper.jsx";
+// LANDING PAGE
+export { default as SceneWrapper } from "./landing_page/SceneWrapper.jsx";
 
 // OBJECTS
 export { default as Sun } from "./Sun.jsx";
@@ -26,6 +26,9 @@ export { default as CenterSphere } from "./planet_page/CenterSphere.jsx";
 export { default as BulletPointSection } from "./planet_page/BulletPointSection.jsx";
 export { default as Footer } from "./planet_page/Footer.jsx";
 export { default as EventsHero } from "./planet_page/EventsHero.jsx";
+
+// WRAPPERS
+export { default as IntroAnimationWrapper } from "./wrappers/IntroAnimationWrapper.jsx";
 
 // UTILS
 export { default as SelectiveBloom } from "./SelectiveBloom.jsx";

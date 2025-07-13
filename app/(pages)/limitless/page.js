@@ -1,24 +1,17 @@
-"use client";
-
 import Image from "next/image";
 
-import { useIntroAnimationStore } from "@/utils/store.js";
-
 // ! COMPONENTS
-import { LimitlessCanvas, Text4R3F } from "@/components";
+import { LimitlessCanvas, Text4R3F, IntroAnimationWrapper } from "@/components";
 
 import logo from "@/assets/images/limitless_letters.png";
 import metaverse_bg from "@/assets/images/metaverse-x.png";
 
 export default function Limitless() {
-  const completedIntroAnimation = useIntroAnimationStore(
-    (state) => state.completed
-  );
   return (
     <div className="pt-[35vh]">
       <LimitlessCanvas trigger="#sphere-trigger" />
 
-      {completedIntroAnimation && (
+      <IntroAnimationWrapper>
         <>
           {/* Sphere Logo */}
           <div className="absolute top-0 left-0 w-full h-[22.5vh] lg:h-[20vh] flex-center !items-end">
@@ -47,10 +40,11 @@ export default function Limitless() {
               width={"auto"}
               height={"auto"}
               className="object-cover w-full h-[70vh] lg:h-auto"
+              priority
             />
           </div>
         </>
-      )}
+      </IntroAnimationWrapper>
     </div>
   );
 }

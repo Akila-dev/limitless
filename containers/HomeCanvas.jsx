@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import {
   OrbitControls,
@@ -22,8 +22,10 @@ export default function HomeCanvas({ data }) {
       <fog attach="fog" args={["#000000", 15, 20]} />
 
       <ambientLight intensity={0.2} />
-      <SceneWrapper data={data} />
-      <Environment files="/env3.jpg" />
+      <Suspense fallback={null}>
+        <SceneWrapper data={data} />
+      </Suspense>
+      {/* <Environment files="/env3.jpg" /> */}
       <OrbitControls enabled={false} />
       {/* <OrbitControls /> */}
     </Canvas>

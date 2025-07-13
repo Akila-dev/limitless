@@ -299,50 +299,48 @@ const SceneWrapper = ({ data }) => {
   );
 
   return (
-    <Suspense fallback={null}>
+    <group ref={container}>
       <SelectiveBloom animateBloom={animateSunBloom} />
-      <group ref={container}>
-        <group ref={galaxyRef} scale={2.5}>
-          <Stars ref={starsRef} scale={5} />
-          <group ref={limitlessRef} position={[0, limitlessY, 0]}>
-            <Sun ref={sunRef} scale={0} position-y={0.3} />
-            <Moon
-              ref={moonRef}
-              scale={limitlessScale}
-              position-x={limitlessEndX}
-              showText={showLimitlessText}
-              onClick={() => handleMoonClick()}
-              onPointerOver={() => handleLimitlessHover()}
-              onPointerLeave={() => handleLimitlessLeave()}
-            />
-          </group>
-          <group rotation={[-Math.PI / 1.02, 0, 0]} position={[0.6, 0.5, 0]}>
-            <group ref={dragWrapperRef}>
-              <group ref={planetsOrbitRef} position-y={-1} scale={3}>
-                {planets_data.map((planet, i) => (
-                  <Planet
-                    ref={planetRefs[i]}
-                    key={i}
-                    label={planet.name}
-                    position={[
-                      Math.cos(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
-                      0,
-                      Math.sin(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
-                    ]}
-                    radius={planet.radius}
-                    scale={1}
-                    showText={showPlanetsText}
-                    onClick={() => handlePlanetClick(i, planet.slug.current)}
-                    // onPOver={() => handlePlanetsHover(i)}
-                    // onPLeave={() => handlePlanetsLeave(i)}
-                  />
-                ))}
-              </group>
+      <group ref={galaxyRef} scale={2.5}>
+        <Stars ref={starsRef} scale={5} />
+        <group ref={limitlessRef} position={[0, limitlessY, 0]}>
+          <Sun ref={sunRef} scale={0} position-y={0.3} />
+          <Moon
+            ref={moonRef}
+            scale={limitlessScale}
+            position-x={limitlessEndX}
+            showText={showLimitlessText}
+            onClick={() => handleMoonClick()}
+            onPointerOver={() => handleLimitlessHover()}
+            onPointerLeave={() => handleLimitlessLeave()}
+          />
+        </group>
+        <group rotation={[-Math.PI / 1.02, 0, 0]} position={[0.6, 0.5, 0]}>
+          <group ref={dragWrapperRef}>
+            <group ref={planetsOrbitRef} position-y={-1} scale={3}>
+              {planets_data.map((planet, i) => (
+                <Planet
+                  ref={planetRefs[i]}
+                  key={i}
+                  label={planet.name}
+                  position={[
+                    Math.cos(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
+                    0,
+                    Math.sin(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
+                  ]}
+                  radius={planet.radius}
+                  scale={1}
+                  showText={showPlanetsText}
+                  onClick={() => handlePlanetClick(i, planet.slug.current)}
+                  // onPOver={() => handlePlanetsHover(i)}
+                  // onPLeave={() => handlePlanetsLeave(i)}
+                />
+              ))}
             </group>
           </group>
         </group>
       </group>
-    </Suspense>
+    </group>
   );
 };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useRef } from "react";
+import { Suspense, useRef, useEffect } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { PerspectiveCamera } from "@react-three/drei";
 import * as THREE from "three";
@@ -12,7 +12,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Sun, Moon, SelectiveBloom, Stars } from "@/components";
 
 // ! ZUSTAND
-import { useIntroAnimationStore } from "@/utils/store.js";
+import { useIntroStore } from "@/utils/store.js";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -26,53 +26,49 @@ function Scene({ trigger }) {
   const introTL = useRef(null);
   const st = useRef(null);
 
-  const completedIntroAnimation = useIntroAnimationStore(
-    (state) => state.completed
-  );
-  const setIntroAnimationAsCompleted = useIntroAnimationStore(
-    (state) => state.setIntroAnimationAsCompleted
-  );
+  const introFinished = useIntroStore((state) => state.introFinished);
+  const setIntroFinished = useIntroStore((state) => state.setIntroFinished);
 
   // ! INTRO ANIMATION
   useGSAP(
     () => {
-      if (!starsRef.current || !limitlessRef.current) {
+      if (!starsRef.current || !limitlessRefInner.current) {
         return;
       }
 
       introTL.current = gsap.timeline({
         defaults: { ease: "expo.inOut", duration: 2 },
-        onComplete: () => setIntroAnimationAsCompleted(),
+        onComplete: () => setIntroFinished(),
       });
 
       introTL.current
-        .from(starsRef.current.scale, {
-          x: 5,
-          y: 5,
-          z: 5,
+        .to(starsRef.current.scale, {
+          x: 1,
+          y: 1,
+          z: 1,
         })
-        .from(
-          limitlessRef.current.position,
+        .to(
+          limitlessRefInner.current.position,
           {
-            y: h * 2,
+            y: h * 1.3,
           },
           "<+=1.3"
         );
     },
     {
       scope: containerRef,
-      dependencies: [limitlessRef],
+      dependencies: [limitlessRefInner],
     }
   );
 
   // ! SCROLLTRIGGER ANIMATION
   useGSAP(
     () => {
-      if (!limitlessRefInner.current) {
+      if (!limitlessRef.current) {
         return;
       }
 
-      if (trigger && completedIntroAnimation) {
+      if (trigger && introFinished) {
         st.current = gsap.timeline({
           defaults: { ease: "none" },
           scrollTrigger: {
@@ -83,26 +79,26 @@ function Scene({ trigger }) {
           },
         });
 
-        st.current.to(limitlessRefInner.current.position, {
-          y: h * 0.1,
+        st.current.to(limitlessRef.current.position, {
+          y: h * 0.5,
         });
       }
     },
     {
-      dependencies: [completedIntroAnimation, limitlessRefInner, trigger],
+      dependencies: [introFinished, limitlessRef, trigger],
     }
   );
 
   return (
     <group ref={containerRef}>
-      <Stars ref={starsRef} />
+      <Stars ref={starsRef} scale={5} />
       <SelectiveBloom animateBloom={true} />
-      <mesh ref={limitlessRef} scale={4} position-y={h * 1.3}>
-        <mesh ref={limitlessRefInner}>
+      <group ref={limitlessRef}>
+        <mesh ref={limitlessRefInner} scale={4} position-y={h * 2}>
           <Sun scale={0.98} position={[0, 0, 0]} />
           <Moon scale={1} position={[0, 0, 0]} />
         </mesh>
-      </mesh>
+      </group>
     </group>
   );
 }
