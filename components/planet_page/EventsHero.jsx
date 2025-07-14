@@ -42,7 +42,9 @@ const EventsHero = ({
           </div>
           <p className="py-2 max-w-30">{description}</p>
 
-          <Button href={reservation || "/"} text="Reserve Your Seat" />
+          <div className="flex">
+            <Button href={reservation || "/"} text="Reserve Your Seat" />
+          </div>
         </div>
       </div>
     </div>

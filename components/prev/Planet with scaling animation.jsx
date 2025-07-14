@@ -31,6 +31,34 @@ export default function Planet(props) {
     return positions;
   }, [count, radius]);
 
+  useGSAP(
+    () => {
+      const sphScale1 = 0.95;
+      const sphScale2 = 0.95;
+      const sphDuration1 = 2;
+      const sphDuration2 = sphDuration1 * 1.5;
+      gsap.to(sphereRef1.current.scale, {
+        duration: sphDuration1,
+        x: sphScale1,
+        y: sphScale1,
+        z: sphScale1,
+        repeat: -1,
+        yoyo: true,
+        ease: "power2.inOut",
+      });
+      gsap.to(sphereRef2.current.scale, {
+        duration: sphDuration2,
+        x: sphScale2,
+        y: sphScale2,
+        z: sphScale2,
+        repeat: -1,
+        yoyo: true,
+        ease: "power2.inOut",
+      });
+    },
+    { scope: sphereContainerRef }
+  );
+
   useFrame((state, delta) => {
     sphereRef1.current.rotation.x -= delta / 20;
     sphereRef1.current.rotation.y -= delta / 12;
