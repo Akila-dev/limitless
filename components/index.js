@@ -29,6 +29,7 @@ export { default as EventsHero } from "./planet_page/EventsHero.jsx";
 
 // WRAPPERS
 export { default as IntroAnimationWrapper } from "./wrappers/IntroAnimationWrapper.jsx";
+export { default as CardsAnimationWrapper } from "./wrappers/CardsAnimationWrapper.jsx";
 
 // UTILS
 export { default as SelectiveBloom } from "./SelectiveBloom.jsx";

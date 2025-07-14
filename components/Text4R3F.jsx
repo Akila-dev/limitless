@@ -15,7 +15,7 @@ const Text4R3F = ({ title, subtitle, paragraph, buttons, center }) => {
   const titleRef = useRef();
   const subtitleRef = useRef();
   const paragraphRef = useRef();
-  const buttonRefs = buttons && buttons.map(() => useRef());
+  const buttonRefs = useRef([]);
 
   useGSAP(
     () => {
@@ -75,6 +75,19 @@ const Text4R3F = ({ title, subtitle, paragraph, buttons, center }) => {
             titleRef.current ? ">-=1" : ">"
           );
         }
+
+        // ! BUTTONS
+        if (buttonRefs.current) {
+          tl.from(
+            buttonRefs.current,
+            {
+              duration: 1,
+            },
+            titleRef.current || subtitleRef.current || paragraphRef.current
+              ? ">-=1"
+              : ">"
+          );
+        }
       }, containerRef);
 
       return () => ctx.revert();
@@ -102,7 +115,11 @@ const Text4R3F = ({ title, subtitle, paragraph, buttons, center }) => {
         <div className="flex items-center justify-start flex-wrap pt-2.25">
           {buttons.map((button, i) => (
             // <Button key={i} text={button.text} href={button.url} />
-            <div key={i} ref={buttonRefs[i]} className="flex">
+            <div
+              key={i}
+              ref={(el) => (buttonRefs.current[i] = el)}
+              className="flex"
+            >
               <Button text={button.text} href={button.url} />
             </div>
           ))}
