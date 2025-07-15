@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import moment from "moment";
@@ -11,7 +11,7 @@ import { FaChevronRight, FaChevronLeft } from "react-icons/fa6";
 import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
 
 // CUSTOM COMPONENTS
-import { EmptyData } from "@/components";
+import { EmptyData, CardsAnimationWrapper } from "@/components";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -20,8 +20,9 @@ import "swiper/css/scrollbar";
 
 import { Mousewheel, Pagination } from "swiper/modules";
 
-const SlideSmall = ({ image, alt, name, slug }) => (
+const SlideSmall = ({ ref, image, alt, name, slug }) => (
   <Link
+    ref={ref}
     href={`/events/${slug}`}
     className="w-full h-10 border-[0.1em] border-fg rounded-[0.5em] overflow-clip block !p-0"
   >
@@ -42,8 +43,9 @@ const SlideSmall = ({ image, alt, name, slug }) => (
   </Link>
 );
 
-const SlideNormal = ({ image, alt, name, slug, date, tag, location }) => (
+const SlideNormal = ({ ref, image, alt, name, slug, date, tag, location }) => (
   <Link
+    ref={ref}
     href={`/events/${slug}`}
     className="w-full h-10 lg:h-12 border-[0.1em] border-fg rounded-[0.5em] overflow-clip block !p-0"
   >
@@ -120,6 +122,7 @@ const NavigationButtons = ({ small }) => {
 
 const Carousel = ({ data, small }) => {
   const [isDesktop, setIsDesktop] = useState();
+  const cardsRefs = useRef([]);
 
   const handleResize = () => {
     setIsDesktop(window.innerWidth >= 1024);
@@ -132,7 +135,12 @@ const Carousel = ({ data, small }) => {
   }, []);
 
   return (
-    <div className="mt-3 space-y-1 w-full max-w-[90vw]">
+    <CardsAnimationWrapper
+      className="mt-3 space-y-1 w-full max-w-[90vw]"
+      // animationType="fade-in"
+      childrenRefs={cardsRefs}
+      onlyOnce={!small}
+    >
       {/* Slider */}
       {data && data.length > 0 ? (
         <Swiper
@@ -151,6 +159,7 @@ const Carousel = ({ data, small }) => {
             <SwiperSlide key={i}>
               {small ? (
                 <SlideSmall
+                  ref={(el) => (cardsRefs.current[i] = el)}
                   image={image.asset.url}
                   alt={image.alt}
                   name={name}
@@ -158,6 +167,7 @@ const Carousel = ({ data, small }) => {
                 />
               ) : (
                 <SlideNormal
+                  ref={(el) => (cardsRefs.current[i] = el)}
                   name={name}
                   date={date}
                   image={image.asset.url}
@@ -180,7 +190,7 @@ const Carousel = ({ data, small }) => {
       ) : (
         <EmptyData text="No events found" />
       )}
-    </div>
+    </CardsAnimationWrapper>
   );
 };
 

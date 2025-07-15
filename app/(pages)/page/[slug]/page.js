@@ -14,9 +14,22 @@ import {
 
 // ! SANITY
 import { client } from "@/sanity/lib/client";
-import { GET_PLANET_PAGE } from "@/sanity/lib/queries";
+import {
+  GET_PLANET_PAGE_STATIC_PARAMS,
+  GET_PLANET_PAGE,
+} from "@/sanity/lib/queries";
 const options = { next: { revalidate: 30 } };
 
+// ! Static params function
+export async function generateStaticParams() {
+  const events = await client.fetch(GET_PLANET_PAGE_STATIC_PARAMS);
+
+  return events.map((event) => ({
+    slug: event.slug.current,
+  }));
+}
+
+// ! Get data function
 async function getPageData(params) {
   const page_data = await client.fetch(GET_PLANET_PAGE, await params, options);
 
@@ -25,7 +38,6 @@ async function getPageData(params) {
 
 // ! Dynamic metadata function
 export async function generateMetadata({ params }) {
-  // const page_data = await client.fetch(GET_PLANET_PAGE, await params, options);
   const page_data = await getPageData(params);
   if (!page_data) return { title: "Not found" };
 
@@ -36,15 +48,10 @@ export async function generateMetadata({ params }) {
       title: page_data.name,
       description: page_data.hero.subtitle || page_data.hero.paragraph || "",
     },
-    // twitter: {
-    //   card: 'summary_large_image',
-    //   title: page_data.name,
-    // description: page_data.hero.subtitle || page_data.hero.paragraph || "",
-    //   images: [post.coverImage],
-    // },
   };
 }
 
+// ! Main page
 export default async function Page({ params }) {
   const page_data = await getPageData(params);
   if (!page_data) return notFound();

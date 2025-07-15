@@ -10,7 +10,15 @@ import { Button } from "@/components";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 
-const Text4R3F = ({ title, subtitle, paragraph, buttons, center }) => {
+const Text4R3F = ({
+  title,
+  subtitle,
+  paragraph,
+  buttons,
+  center,
+  sm,
+  delay,
+}) => {
   const containerRef = useRef();
   const titleRef = useRef();
   const subtitleRef = useRef();
@@ -43,6 +51,7 @@ const Text4R3F = ({ title, subtitle, paragraph, buttons, center }) => {
           });
           tl.from(splitH.words, {
             duration: 1,
+            delay: delay ? delay : 0,
           });
         }
 
@@ -56,6 +65,7 @@ const Text4R3F = ({ title, subtitle, paragraph, buttons, center }) => {
             splitST.lines,
             {
               duration: 1,
+              delay: !titleRef.current && delay ? delay : 0,
             },
             titleRef.current ? ">-=1" : ">"
           );
@@ -71,6 +81,8 @@ const Text4R3F = ({ title, subtitle, paragraph, buttons, center }) => {
             splitP.lines,
             {
               duration: 1,
+              delay:
+                !titleRef.current && !subtitleRef.current && delay ? delay : 0,
             },
             titleRef.current ? ">-=1" : ">"
           );
@@ -82,6 +94,13 @@ const Text4R3F = ({ title, subtitle, paragraph, buttons, center }) => {
             buttonRefs.current,
             {
               duration: 1,
+              delay:
+                !titleRef.current &&
+                !subtitleRef.current &&
+                !paragraphRef.current &&
+                delay
+                  ? delay
+                  : 0,
             },
             titleRef.current || subtitleRef.current || paragraphRef.current
               ? ">-=1"
@@ -102,12 +121,12 @@ const Text4R3F = ({ title, subtitle, paragraph, buttons, center }) => {
     >
       {title && <h1 ref={titleRef}>{title}</h1>}
       {subtitle && (
-        <p ref={subtitleRef} className="p-lg">
+        <p ref={subtitleRef} className={`p-lg`}>
           {subtitle}
         </p>
       )}
       {paragraph && (
-        <p ref={paragraphRef} className="p-lg">
+        <p ref={paragraphRef} className={``}>
           {paragraph}
         </p>
       )}

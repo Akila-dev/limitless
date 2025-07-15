@@ -37,7 +37,7 @@ export default async function EventsPage({ params }) {
   if (!page_data) return notFound();
 
   return (
-    <div className="min-h-screen flex flex-col gap-2 justify-between">
+    <div className="min-h-screen flex flex-col gap-1 justify-between">
       <StarsCanvas />
       <EventsHero
         img={page_data.image.asset.url}

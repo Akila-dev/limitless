@@ -2,19 +2,11 @@
 
 import { useRef } from "react";
 
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
-
 import Image from "next/image";
 import bulletpoint from "@/assets/images/bulletpoint.png";
 import { CardsAnimationWrapper } from "@/components";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
-
 const BulletList = ({ data }) => {
-  const container = useRef(null);
   const cardsRef = useRef([]);
 
   return (

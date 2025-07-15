@@ -62,7 +62,7 @@ input,
 div,
 label,
 textarea {
-  @apply text-[3.65vw] xs:text-sm md:text-[1.8vw] lg:text-[1.2vw] leading-[150%] !font-light;
+  @apply text-[3.65vw] xs:text-sm md:text-[1.8vw] lg:text-[1.2vw] leading-[150%] !font-light font-base;
 }
 .xs {
   @apply text-[3.2vw] xs:text-xs md:text-[1.5vw] lg:text-[1vw] leading-[150%] !font-light;

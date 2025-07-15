@@ -16,10 +16,28 @@ const CardsAnimationWrapper = ({
   children,
   childrenRefs,
   className,
-  immidiate,
+  immediate,
+  animationType,
+  onlyOnce,
 }) => {
   const containerRef = useRef(null);
   const cardsRef = childrenRefs || useRef(null);
+
+  const fadeInProp = {
+    duration: 1,
+    ease: "sine.in",
+    opacity: 0,
+    stagger: 0.2,
+  };
+
+  const slideInProp = {
+    duration: 1,
+    ease: "sine.out",
+    y: 20,
+    x: 20,
+    opacity: 0,
+    stagger: 0.2,
+  };
 
   useGSAP(
     () => {
@@ -28,22 +46,21 @@ const CardsAnimationWrapper = ({
           scrollTrigger: {
             trigger: containerRef.current,
             start: "top top+=95%",
-            toggleActions: "restart none none reset",
+            toggleActions: onlyOnce
+              ? "play none none none"
+              : "restart none none reset",
           },
-          defaults: {
-            duration: 1,
-            ease: "sine.out",
-            y: 20,
-            x: 20,
-            opacity: 0,
-            stagger: 0.2,
-          },
+          defaults: animationType === "fade-in" ? fadeInProp : slideInProp,
         });
 
         // ! TITLE
         if (cardsRef.current) {
-          tl.from(cardsRef.current, {
-            delay: immediate ? 0 : 1,
+          tl.from(containerRef.current, {
+            // x: 0,
+            // y: 0,
+            duration: immediate ? 0.1 : 1,
+          }).from(cardsRef.current, {
+            // delay: immediate ? 0 : 1,
             duration: 1,
           });
         }
