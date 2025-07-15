@@ -92,6 +92,7 @@ const EventsHero = ({
           <CardsAnimationWrapper
             className="flex-v-center flex-wrap !gap-x-1 !gap-y-0.25 pt-0.5"
             childrenRefs={cardsRefs}
+            delay={1}
           >
             <p
               ref={(el) => (cardsRefs.current[0] = el)}
@@ -110,8 +111,7 @@ const EventsHero = ({
             <Text4R3F
               paragraph={description}
               buttons={[{ text: "Reserve Your Seat", url: reservation || "/" }]}
-              delay={2}
-              sm
+              delay={1.5}
             />
           </div>
         </div>

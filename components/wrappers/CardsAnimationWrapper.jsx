@@ -16,7 +16,7 @@ const CardsAnimationWrapper = ({
   children,
   childrenRefs,
   className,
-  immediate,
+  delay,
   animationType,
   onlyOnce,
 }) => {
@@ -56,9 +56,8 @@ const CardsAnimationWrapper = ({
         // ! TITLE
         if (cardsRef.current) {
           tl.from(containerRef.current, {
-            // x: 0,
-            // y: 0,
-            duration: immediate ? 0.1 : 1,
+            delay: delay ? delay : 0,
+            duration: 0.5,
           }).from(cardsRef.current, {
             // delay: immediate ? 0 : 1,
             duration: 1,

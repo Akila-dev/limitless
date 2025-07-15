@@ -120,7 +120,7 @@ const NavigationButtons = ({ small }) => {
   );
 };
 
-const Carousel = ({ data, small }) => {
+const Carousel = ({ data, small, delay }) => {
   const [isDesktop, setIsDesktop] = useState();
   const cardsRefs = useRef([]);
 
@@ -140,6 +140,7 @@ const Carousel = ({ data, small }) => {
       // animationType="fade-in"
       childrenRefs={cardsRefs}
       onlyOnce={!small}
+      delay={delay ? delay : small ? 0 : 1}
     >
       {/* Slider */}
       {data && data.length > 0 ? (

@@ -8,9 +8,22 @@ import { EventsCarousel } from "@/containers";
 
 // ! SANITY
 import { client } from "@/sanity/lib/client";
-import { GET_EVENT_DATA } from "@/sanity/lib/queries";
+import {
+  GET_EVENT_PAGE_STATIC_PARAMS,
+  GET_EVENT_DATA,
+} from "@/sanity/lib/queries";
 const options = { next: { revalidate: 30 } };
 
+// ! Static params function
+export async function generateStaticParams() {
+  const events = await client.fetch(GET_EVENT_PAGE_STATIC_PARAMS);
+
+  return events.map((event) => ({
+    slug: event.slug.current,
+  }));
+}
+
+// ! Get data function
 async function getPageData(params) {
   const page_data = await client.fetch(GET_EVENT_DATA, await params, options);
 
@@ -32,6 +45,7 @@ export async function generateMetadata({ params }) {
   };
 }
 
+// ! Main page
 export default async function EventsPage({ params }) {
   const page_data = await getPageData(params);
   if (!page_data) return notFound();

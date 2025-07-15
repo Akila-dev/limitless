@@ -10,15 +10,7 @@ import { Button } from "@/components";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 
-const Text4R3F = ({
-  title,
-  subtitle,
-  paragraph,
-  buttons,
-  center,
-  sm,
-  delay,
-}) => {
+const Text4R3F = ({ title, subtitle, paragraph, buttons, center, delay }) => {
   const containerRef = useRef();
   const titleRef = useRef();
   const subtitleRef = useRef();
