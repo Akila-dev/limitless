@@ -165,7 +165,7 @@ export default function Planet(props) {
             color={light_color}
             fontSize={0.06}
             position={[0, -radius * 1.3, 0]}
-            showText={props.showText && !props.hide}
+            showText={props.showText && !props.hide && !props.makeLargeDots}
           />
         </mesh>
       )}
