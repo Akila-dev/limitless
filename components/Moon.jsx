@@ -17,7 +17,7 @@ const Moon = (props) => {
       </mesh>
       <BillboardText
         text="LIMITLESS"
-        position={[-0.3, 0, 1]}
+        position={[props.mobile ? -0.1 : -0.3, 0, 1]}
         fontSize={0.17}
         showText={props.showText}
       />

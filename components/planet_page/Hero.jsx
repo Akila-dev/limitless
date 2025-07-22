@@ -6,7 +6,7 @@ const Hero = ({ text }) => {
   return (
     <div className="lg:min-h-50 w-full relative">
       <div className="absolute top-0 right-0 w-[100vw] md:w-[75vw] lg:w-[65vw] h-35 md:h-[80%] lg:h-full">
-        <PlanetCanvas direction="right" />
+        {/* <PlanetCanvas direction="right" /> */}
       </div>
       {/* TEXT CONTENT */}
       <div className="left-0 w-full container grid-2">

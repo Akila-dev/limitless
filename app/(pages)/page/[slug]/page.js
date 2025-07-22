@@ -58,7 +58,7 @@ export default async function Page({ params }) {
 
   return (
     <div className="">
-      <StarsCanvas />
+      {/* <StarsCanvas /> */}
       {/* HERO SECTION*/}
       <Hero
         text={{

@@ -52,7 +52,7 @@ export default async function EventsPage({ params }) {
 
   return (
     <div className="min-h-screen flex flex-col gap-1 justify-between">
-      <StarsCanvas />
+      {/* <StarsCanvas /> */}
       <EventsHero
         img={page_data.image.asset.url}
         name={page_data.name}

@@ -1,6 +1,9 @@
 // LANDING PAGE
 export { default as SceneWrapper } from "./landing_page/SceneWrapper.jsx";
 
+// SCENES
+export { default as GalaxyScene } from "./scenes/GalaxyScene.jsx";
+
 // OBJECTS
 export { default as Sun } from "./Sun.jsx";
 export { default as Moon } from "./Moon.jsx";
@@ -30,6 +33,7 @@ export { default as EventsHero } from "./planet_page/EventsHero.jsx";
 // WRAPPERS
 export { default as IntroAnimationWrapper } from "./wrappers/IntroAnimationWrapper.jsx";
 export { default as CardsAnimationWrapper } from "./wrappers/CardsAnimationWrapper.jsx";
+export { default as GalaxySceneWrapper } from "./wrappers/GalaxySceneWrapper.jsx";
 
 // UTILS
 export { default as SelectiveBloom } from "./SelectiveBloom.jsx";

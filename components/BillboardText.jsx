@@ -62,6 +62,39 @@ const StaggeredText = ({
         },
         0
       );
+    } else {
+      const tl = gsap.timeline();
+
+      // // Set initial state
+      // letterRefs.current.forEach((ref) => {
+      //   if (ref) {
+      //     ref.scale.set(0, 0, 0);
+      //     ref.material.opacity = 0;
+      //     ref.material.transparent = true;
+      //   }
+      // });
+
+      tl.to(
+        letterRefs.current.map((ref) => ref.material),
+        {
+          opacity: 0,
+          duration: 0.5,
+          stagger: 0.05,
+          ease: "sine.out",
+        },
+        0
+      ).to(
+        letterRefs.current.map((ref) => ref.scale),
+        {
+          x: 0,
+          y: 0,
+          z: 0,
+          duration: 0.8,
+          stagger: 0.05,
+          ease: "power3.out",
+        },
+        0
+      );
     }
   }, [showText]);
 
