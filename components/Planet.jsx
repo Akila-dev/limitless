@@ -64,17 +64,25 @@ export default function Planet(props) {
     } else {
       const tl = gsap.timeline();
 
-      tl.set(sphereMaterialRef1.current.material, {
+      tl.to(sphereMaterialRef1.current, {
         opacity: 0.9,
-      }).set(sphereMaterialRef2.current.material, {
-        opacity: 1,
-      });
+      }).to(
+        sphereMaterialRef2.current,
+        {
+          opacity: 1,
+        },
+        "<"
+      );
       if (textRef && textRef.current) {
-        tl.set(textRef.current.scale, {
-          x: 1,
-          y: 1,
-          z: 1,
-        });
+        tl.to(
+          textRef.current.scale,
+          {
+            x: 1,
+            y: 1,
+            z: 1,
+          },
+          "<"
+        );
       }
     }
   }, [props.hide]);
@@ -109,17 +117,25 @@ export default function Planet(props) {
     } else {
       const tl = gsap.timeline();
 
-      tl.set(sphereMaterialRef1.current, {
+      tl.to(sphereMaterialRef1.current, {
         size: 0.04,
-      }).set(sphereMaterialRef2.current, {
-        size: 0.02,
-      });
+      }).to(
+        sphereMaterialRef2.current,
+        {
+          size: 0.02,
+        },
+        "<"
+      );
       if (textRef && textRef.current) {
-        tl.set(textRef.current.scale, {
-          x: 1,
-          y: 1,
-          z: 1,
-        });
+        tl.to(
+          textRef.current.scale,
+          {
+            x: 1,
+            y: 1,
+            z: 1,
+          },
+          "<"
+        );
       }
     }
   }, [props.makeLargeDots]);

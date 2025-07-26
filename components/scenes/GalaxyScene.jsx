@@ -242,13 +242,16 @@ const GalaxyScene = ({ data }) => {
   // ! TRANSITION ANIMATIONS
   useEffect(() => {
     setIntroStarted();
-    setFinishedPlanetTransition(false);
     console.log(pathname);
     console.log(previousPathname.current);
 
     const pageTransitions = () => {
       // * 1. TO HOME PAGE
-      if (pathname === "/" && previousPathname.current !== "/") {
+      if (
+        pathname === "/" &&
+        previousPathname.current !== "/" &&
+        !previousPathname.current.includes("/page/")
+      ) {
         console.log("to home");
         toHome();
       }
@@ -266,8 +269,8 @@ const GalaxyScene = ({ data }) => {
         homeToPlanet();
       } // * 4. PLANET PAGE TO HOME PAGE
       else if (
-        previousPathname.current === "/" &&
-        pathname.includes("/page/")
+        previousPathname.current.includes("/page/") &&
+        pathname === "/"
       ) {
         console.log("home to planet page");
         planetToHome();
@@ -427,6 +430,7 @@ const GalaxyScene = ({ data }) => {
         defaults: { duration: 1.2, ease: "expo.inOut" },
         onStart: () => {
           setPauseAutoRotation(true);
+          setFinishedPlanetTransition(false);
         },
         onComplete: () => {
           setTimeout(() => {
@@ -497,6 +501,7 @@ const GalaxyScene = ({ data }) => {
       onStart: () => {
         setPauseAutoRotation(true);
         setTransitioningPlanet(true);
+        setFinishedPlanetTransition(false);
       },
       onComplete: () => {
         transitionComplete();
@@ -516,9 +521,11 @@ const GalaxyScene = ({ data }) => {
           x: -Math.PI * 0.12,
           y:
             w > h
-              ? Math.PI * 0.55 +
+              ? Math.PI * 4 +
+                Math.PI * 0.55 +
                 (Math.PI * 2 * activePlanet) / planets_data.length
-              : Math.PI * 0.62 +
+              : Math.PI * 4 +
+                Math.PI * 0.62 +
                 (Math.PI * 2 * activePlanet) / planets_data.length,
         },
         "<+=0.3"
@@ -546,58 +553,56 @@ const GalaxyScene = ({ data }) => {
 
   // ! TRANSITION ANIMATION 4: PLANET PAGE TO HOME ANIMATION
   const planetToHome = contextSafe(() => {
-    tl.current.reverse();
-    // setPauseAutoRotation(false);
-    // tl.current = gsap.timeline({
-    //   defaults: { duration: 3, ease: "expo.inOut" },
-    //   onStart: () => {
-    //     setPauseAutoRotation(true);
-    //     setTransitioningPlanet(true);
-    //   },
-    //   onComplete: () => {
-    //     transitionComplete();
-    //   },
-    // });
+    tl.current = gsap.timeline({
+      defaults: { duration: 3, ease: "expo.inOut" },
+      onStart: () => {
+        setIntroStarted();
+        setFinishedPlanetTransition(false);
+        // setPauseAutoRotation(true);
+        // setTransitioningPlanet(true);
+      },
+      onComplete: () => {
+        setPauseAutoRotation(false);
+        setTransitioningPlanet(false);
+        transitionComplete();
+      },
+    });
 
-    // tl.current
-    //   .to(limitlessRef.current.scale, {
-    //     x: 0,
-    //     y: 0,
-    //     z: 0,
-    //     duration: 0.5,
-    //   })
-    //   .to(
-    //     planetsOrbitRef.current.rotation,
-    //     {
-    //       x: -Math.PI * 0.12,
-    //       y:
-    //         w > h
-    //           ? Math.PI * 0.55 +
-    //             (Math.PI * 2 * activePlanet) / planets_data.length
-    //           : Math.PI * 0.62 +
-    //             (Math.PI * 2 * activePlanet) / planets_data.length,
-    //     },
-    //     "<+=0.3"
-    //   )
-    //   .to(
-    //     planetsOrbitRef.current.position,
-    //     {
-    //       y: w > h ? 0 : -1.3,
-    //       onComplete: () => {
-    //         setFinishedPlanetTransition(true);
-    //       },
-    //     },
-    //     "<"
-    //   )
-    //   .to(
-    //     planetRefs.current[activePlanet].scale,
-    //     {
-    //       x: 6,
-    //       y: 6,
-    //       z: 6,
-    //     },
-    //     "<+=1"
-    //   );
+    tl.current
+      .to(planetsOrbitRef.current.rotation, {
+        x: 0,
+        y: 0,
+      })
+      .to(
+        planetsOrbitRef.current.position,
+        {
+          y: 0,
+          onComplete: () => {
+            setPauseAutoRotation(false);
+            // setFinishedPlanetTransition(false);
+          },
+        },
+        "<"
+      )
+      .to(
+        planetRefs.current[activePlanet].scale,
+        {
+          x: w > h ? 1 : 1.25,
+          y: w > h ? 1 : 1.25,
+          z: w > h ? 1 : 1.25,
+        },
+        "<+=1"
+      )
+      .to(
+        limitlessRef.current.scale,
+        {
+          x: 1,
+          y: 1,
+          z: 1,
+          duration: 1,
+        },
+        "<+=1"
+      );
   });
 
   return (
