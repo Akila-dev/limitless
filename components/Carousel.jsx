@@ -136,7 +136,7 @@ const Carousel = ({ data, small, delay }) => {
 
   return (
     <CardsAnimationWrapper
-      className="mt-3 space-y-1 w-full max-w-[90vw]"
+      className={`space-y-1 w-full max-w-[90vw] ${small ? "mt-3" : ""}`}
       // animationType="fade-in"
       childrenRefs={cardsRefs}
       onlyOnce={!small}

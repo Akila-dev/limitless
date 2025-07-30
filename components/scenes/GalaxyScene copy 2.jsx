@@ -55,13 +55,6 @@ const GalaxyScene = ({ data, windowSize }) => {
   const planetRad = 0.2;
   const planetSM = planetRad * 0.8;
   const planetMid = planetRad * 0.9;
-  const planetScale = isDesktopLayout ? 1 : 1.25;
-  const planetOrbitGroupRotation = isDesktopLayout
-    ? [-Math.PI / 1.02, 0, 0]
-    : [-Math.PI / 1.1, 0, 0];
-  const planetOrbitGroupPosition = isDesktopLayout
-    ? [0.6, 0.5, 0]
-    : [0.8, 0, 0];
 
   // * INTRO ANIMATION VARIABLES
   const tl = useRef(null);
@@ -70,18 +63,13 @@ const GalaxyScene = ({ data, windowSize }) => {
   const limitlessTL = useRef(null);
   const planetsTL = useRef(null);
   const eventTL = useRef(null);
-  const galaxyScale = isDesktopLayout ? 2.5 : 2;
   // * Home
   const homeLimitlessScale = isDesktopLayout ? 0.7 : 0.75;
   const homeLimitlessEndX = isDesktopLayout ? 2.25 : 0.75;
   const limitlessY = -0.25;
   const activePlanetRotationY = isDesktopLayout
-    ? Math.PI * 4 +
-        Math.PI * 0.55 +
-        (Math.PI * 2 * activePlanet) / data?.length || 8
-    : Math.PI * 4 +
-        Math.PI * 0.62 +
-        (Math.PI * 2 * activePlanet) / data?.length || 8;
+    ? Math.PI * 4 + Math.PI * 0.55 + (Math.PI * 2 * activePlanet) / data.length
+    : Math.PI * 4 + Math.PI * 0.62 + (Math.PI * 2 * activePlanet) / data.length;
   // * Limitless
   const limitlessPageLimitlessScale = 4;
   const limitlessPageYStart = h * 1;
@@ -254,39 +242,47 @@ const GalaxyScene = ({ data, windowSize }) => {
   // ! TRANSITION ANIMATIONS
   // ! TRANSITION ANIMATIONS
   // ! TRANSITION ANIMATIONS
-  const pageTransitions = () => {
-    // * 1. TO HOME PAGE
-    if (
-      pathname === "/" &&
-      previousPathname.current !== "/" &&
-      !previousPathname.current.includes("/page/")
-    ) {
-      // console.log("to home");
-      toHome();
-    }
-    // * 2. TO PLANET PAGE
-    if (previousPathname.current !== "/" && pathname.includes("/page/")) {
-      // console.log("to planet page");
-      toPlanetPage();
-    }
-    // * 3. HOME TO PLANET PAGE
-    else if (previousPathname.current === "/" && pathname.includes("/page/")) {
-      // console.log("home to planet page");
-      homeToPlanet();
-    } // * 4. PLANET PAGE TO HOME PAGE
-    else if (previousPathname.current.includes("/page/") && pathname === "/") {
-      // console.log("home to planet page");
-      planetToHome();
-    }
-    // * NORMAL PAGES WITHOUT TRANSITIONS
-    else {
-      // console.log("else");
-      toNoTransition(true);
-    }
-  };
-
   useEffect(() => {
     setIntroStarted();
+    console.log(pathname);
+    console.log(previousPathname.current);
+
+    const pageTransitions = () => {
+      // * 1. TO HOME PAGE
+      if (
+        pathname === "/" &&
+        previousPathname.current !== "/" &&
+        !previousPathname.current.includes("/page/")
+      ) {
+        console.log("to home");
+        toHome();
+      }
+      // * 2. TO PLANET PAGE
+      if (previousPathname.current !== "/" && pathname.includes("/page/")) {
+        console.log("to planet page");
+        toPlanetPage();
+      }
+      // * 3. HOME TO PLANET PAGE
+      else if (
+        previousPathname.current === "/" &&
+        pathname.includes("/page/")
+      ) {
+        console.log("home to planet page");
+        homeToPlanet();
+      } // * 4. PLANET PAGE TO HOME PAGE
+      else if (
+        previousPathname.current.includes("/page/") &&
+        pathname === "/"
+      ) {
+        console.log("home to planet page");
+        planetToHome();
+      }
+      // * NORMAL PAGES WITHOUT TRANSITIONS
+      else {
+        console.log("else");
+        toNoTransition(true);
+      }
+    };
 
     pageTransitions();
   }, [pathname]);
@@ -575,9 +571,9 @@ const GalaxyScene = ({ data, windowSize }) => {
 
     // Shrink the active planet back to original size
     tl.current.to(planetRefs.current[activePlanet].scale, {
-      x: planetScale,
-      y: planetScale,
-      z: planetScale,
+      x: w > h ? 1 : 1.25,
+      y: w > h ? 1 : 1.25,
+      z: w > h ? 1 : 1.25,
       duration: 2,
     });
 
@@ -615,16 +611,10 @@ const GalaxyScene = ({ data, windowSize }) => {
     );
   });
 
-  useEffect(() => {
-    if (tl.current?.isActive()) {
-      tl.current.invalidate(); // Recalculate values
-    }
-  }, [isDesktopLayout]);
-
   return (
     <group ref={container}>
       <SelectiveBloom animateBloom={animateSunBloom} />
-      <group ref={galaxyRef} scale={galaxyScale}>
+      <group ref={galaxyRef} scale={w > h ? 2.5 : 2}>
         <Stars ref={starsRef} scale={5} />
 
         <group ref={scrollRef}>
@@ -642,8 +632,8 @@ const GalaxyScene = ({ data, windowSize }) => {
             />
           </group>
           <group
-            rotation={planetOrbitGroupRotation}
-            position={planetOrbitGroupPosition}
+            rotation={[w > h ? -Math.PI / 1.02 : -Math.PI / 1.1, 0, 0]}
+            position={[w > h ? 0.6 : 0.8, w > h ? 0.5 : 0, 0]}
           >
             <group ref={dragWrapperRef}>
               <group ref={planetsOrbitRef} position-y={-1} scale={3}>
@@ -658,7 +648,7 @@ const GalaxyScene = ({ data, windowSize }) => {
                       Math.sin(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
                     ]}
                     radius={planet.radius}
-                    scale={planetScale}
+                    scale={w > h ? 1 : 1.25}
                     showText={showPlanetsText}
                     onClick={() => handlePlanetClick(i, planet.slug.current)}
                     onPointerOver={() => handlePlanetsHover(i)}

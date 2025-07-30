@@ -51,7 +51,7 @@ export default async function EventsPage({ params }) {
   if (!page_data) return notFound();
 
   return (
-    <div className="min-h-screen flex flex-col gap-1 justify-between">
+    <div className="min-h-screen flex flex-col justify-between">
       {/* <StarsCanvas /> */}
       <EventsHero
         img={page_data.image.asset.url}
@@ -62,7 +62,7 @@ export default async function EventsPage({ params }) {
         tag={page_data.tag.name}
         reservation={page_data.reservation}
       />
-      <div className="container-x pb-2">
+      <div className="container-x pb-2 pt-0.5">
         <EventsCarousel />
       </div>
     </div>

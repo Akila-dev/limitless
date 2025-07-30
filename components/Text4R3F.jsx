@@ -4,101 +4,152 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
+import SplitText from "gsap/SplitText";
 
 import { Button } from "@/components";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 
-const Text4R3F = ({ title, subtitle, paragraph, buttons, center, delay }) => {
+const Text4R3F = ({
+  title,
+  subtitle,
+  paragraph,
+  buttons,
+  center,
+  delay,
+  titleClassName,
+}) => {
   const containerRef = useRef();
   const titleRef = useRef();
   const subtitleRef = useRef();
   const paragraphRef = useRef();
   const buttonRefs = useRef([]);
 
+  const tlRef = useRef(); // * Timeline Ref
+
+  // ! SPLIT TEXT REFS
+  const splitHRef = useRef();
+  const splitSTRef = useRef();
+  const splitPRef = useRef();
+
+  const splitAndAnimate = () => {
+    splitHRef.current?.revert();
+    splitSTRef.current?.revert();
+    splitPRef.current?.revert();
+
+    // ! SPLIT TITLE
+    if (titleRef.current) {
+      splitHRef.current = new SplitText(titleRef.current, {
+        type: "words, lines",
+        mask: "lines",
+      });
+    }
+    // ! SPLIT SUBTITLE
+    if (subtitleRef.current) {
+      splitSTRef.current = new SplitText(subtitleRef.current, {
+        type: "lines",
+        mask: "lines",
+      });
+    }
+    // ! SPLIT PARAGRAPH
+    if (paragraphRef.current) {
+      splitPRef.current = new SplitText(paragraphRef.current, {
+        type: "words, lines",
+        mask: "lines",
+      });
+    }
+
+    // ! ANIMATE SPLIT TEXTS
+    tlRef.current = gsap.timeline({
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top top+=95%",
+        toggleActions: "restart none none reset",
+      },
+      defaults: {
+        duration: 1,
+        ease: "power2.inOut",
+        y: 20,
+        opacity: 0,
+        stagger: 0.1,
+      },
+    });
+    // * TITLE ANIMATION
+    if (titleRef.current && splitHRef.current) {
+      tlRef.current.from(splitHRef.current.words, {
+        duration: 1,
+        delay: delay ? delay : 0,
+      });
+    }
+    // * SUBTITLE ANIMATION
+    if (subtitleRef.current && splitSTRef.current) {
+      tlRef.current.from(
+        splitSTRef.current.lines,
+        {
+          duration: 1,
+          delay: !titleRef.current && delay ? delay : 0,
+        },
+        titleRef.current ? ">-=1" : ">"
+      );
+    }
+    // * PARAGRAPH ANIMATION
+    if (paragraphRef.current && splitPRef.current) {
+      tlRef.current.from(
+        splitPRef.current.lines,
+        {
+          duration: 1,
+          delay: !titleRef.current && !subtitleRef.current && delay ? delay : 0,
+        },
+        titleRef.current ? ">-=1" : ">"
+      );
+    }
+    // * BUTTONS ANIMATION
+    if (buttonRefs.current) {
+      tlRef.current.from(
+        buttonRefs.current,
+        {
+          duration: 1,
+          delay:
+            !titleRef.current &&
+            !subtitleRef.current &&
+            !paragraphRef.current &&
+            delay
+              ? delay
+              : 0,
+        },
+        titleRef.current || subtitleRef.current || paragraphRef.current
+          ? ">-=1"
+          : ">"
+      );
+    }
+
+    ScrollTrigger.refresh();
+  };
+
   useGSAP(
     () => {
       const ctx = gsap.context(() => {
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top top+=95%",
-            toggleActions: "restart none none reset",
-          },
-          defaults: {
-            duration: 1,
-            ease: "power2.inOut",
-            y: 20,
-            opacity: 0,
-            stagger: 0.1,
-          },
-        });
+        splitAndAnimate();
 
-        // ! TITLE
-        if (titleRef.current) {
-          let splitH = SplitText.create(titleRef.current, {
-            type: "words, lines",
-            mask: "lines",
-          });
-          tl.from(splitH.words, {
-            duration: 1,
-            delay: delay ? delay : 0,
-          });
-        }
+        // Resize listener with debounce
+        let resizeTimeout;
+        const handleResize = () => {
+          clearTimeout(resizeTimeout);
+          resizeTimeout = setTimeout(() => {
+            splitAndAnimate();
+          }, 100);
+        };
 
-        // ! SUBTITLE
-        if (subtitleRef.current) {
-          let splitST = SplitText.create(subtitleRef.current, {
-            type: "lines",
-            mask: "lines",
-          });
-          tl.from(
-            splitST.lines,
-            {
-              duration: 1,
-              delay: !titleRef.current && delay ? delay : 0,
-            },
-            titleRef.current ? ">-=1" : ">"
-          );
-        }
+        window.addEventListener("resize", handleResize);
 
-        // ! PARAGRAPH
-        if (paragraphRef.current) {
-          let splitP = SplitText.create(paragraphRef.current, {
-            type: "words, lines",
-            mask: "lines",
-          });
-          tl.from(
-            splitP.lines,
-            {
-              duration: 1,
-              delay:
-                !titleRef.current && !subtitleRef.current && delay ? delay : 0,
-            },
-            titleRef.current ? ">-=1" : ">"
-          );
-        }
+        return () => {
+          window.removeEventListener("resize", handleResize);
 
-        // ! BUTTONS
-        if (buttonRefs.current) {
-          tl.from(
-            buttonRefs.current,
-            {
-              duration: 1,
-              delay:
-                !titleRef.current &&
-                !subtitleRef.current &&
-                !paragraphRef.current &&
-                delay
-                  ? delay
-                  : 0,
-            },
-            titleRef.current || subtitleRef.current || paragraphRef.current
-              ? ">-=1"
-              : ">"
-          );
-        }
+          splitHRef.current?.revert();
+          splitSTRef.current?.revert();
+          splitPRef.current?.revert();
+          tlRef.current?.kill();
+        };
       }, containerRef);
 
       return () => ctx.revert();
@@ -111,7 +162,11 @@ const Text4R3F = ({ title, subtitle, paragraph, buttons, center, delay }) => {
       ref={containerRef}
       className={`space-y-0.5 lg:space-y-0.25 ${center ? "!text-center" : ""}`}
     >
-      {title && <h1 ref={titleRef}>{title}</h1>}
+      {title && (
+        <h1 ref={titleRef} className={titleClassName ? titleClassName : ""}>
+          {title}
+        </h1>
+      )}
       {subtitle && (
         <p ref={subtitleRef} className={`p-lg`}>
           {subtitle}
