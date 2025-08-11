@@ -261,26 +261,31 @@ const GalaxyScene = ({ data, windowSize }) => {
       previousPathname.current !== "/" &&
       !previousPathname.current.includes("/page/")
     ) {
-      // console.log("to home");
+      console.log("to home");
       toHome();
     }
     // * 2. TO PLANET PAGE
     if (previousPathname.current !== "/" && pathname.includes("/page/")) {
-      // console.log("to planet page");
+      console.log("to planet page");
       toPlanetPage();
     }
     // * 3. HOME TO PLANET PAGE
     else if (previousPathname.current === "/" && pathname.includes("/page/")) {
-      // console.log("home to planet page");
+      console.log("home to planet page");
       homeToPlanet();
     } // * 4. PLANET PAGE TO HOME PAGE
     else if (previousPathname.current.includes("/page/") && pathname === "/") {
-      // console.log("home to planet page");
+      console.log("home to planet page");
       planetToHome();
+    }
+    // * 5. TO LIMITLESS PAGE
+    if (pathname === "/limitless") {
+      console.log("to limitless page");
+      toLimitlessPage();
     }
     // * NORMAL PAGES WITHOUT TRANSITIONS
     else {
-      // console.log("else");
+      console.log("else");
       toNoTransition(true);
     }
   };
@@ -332,6 +337,7 @@ const GalaxyScene = ({ data, windowSize }) => {
       .set(limitlessRef.current.scale, { x: 1, y: 1, z: 1 })
       .set(limitlessRef.current.position, { x: 0, y: limitlessY, z: 0 })
       .set(sunRef.current.position, { x: 0, y: 0.3, z: 0 })
+      .set(sunRef.current.scale, { x: 0, y: 0, z: 0 })
       .set(moonRef.current.position, {
         x: homeLimitlessEndX,
         y: 0,
@@ -342,7 +348,6 @@ const GalaxyScene = ({ data, windowSize }) => {
         y: homeLimitlessScale,
         z: homeLimitlessScale,
       })
-      .set(sunRef.current.scale, { x: 0, y: 0, z: 0 })
       .set(planetsOrbitRef.current.scale, { x: 3, y: 3, z: 3 })
       .set(planetsOrbitRef.current.position, { x: 0, y: -1, z: 0 })
       .set(planetsOrbitRef.current.rotation, { x: 0, y: 0, z: 0 });
@@ -613,6 +618,92 @@ const GalaxyScene = ({ data, windowSize }) => {
       },
       "<+=0.5"
     );
+  });
+
+  // ! TRANSITION ANIMATION 5: TO LIMITLESS PAGE (FOR MOVING TO LIMITLESS PAGE)
+  const toLimitlessPage = contextSafe(() => {
+    toNoTransition();
+
+    const limitlessPageLimitlessScale = isDesktopLayout ? 2.35 : 2.15;
+
+    setTimeout(() => {
+      tl.current = gsap.timeline({
+        defaults: { duration: 2, ease: "expo.inOut" },
+        onStart: () => {
+          setShowLimitlessText(false);
+          setShowPlanetsText(false);
+          setPauseAutoRotation(true);
+        },
+        onComplete: () => {
+          transitionComplete();
+        },
+      });
+
+      tl.current
+        // SET INITIAL VALUES
+        .set(sunRef.current.scale, {
+          x: limitlessPageLimitlessScale,
+          y: limitlessPageLimitlessScale,
+          z: limitlessPageLimitlessScale,
+        })
+        .set(
+          sunRef.current.position,
+          {
+            x: 0,
+            y: 0,
+            z: 0,
+          },
+          "<"
+        )
+        .set(
+          moonRef.current.scale,
+          {
+            x: limitlessPageLimitlessScale,
+            y: limitlessPageLimitlessScale,
+            z: limitlessPageLimitlessScale,
+          },
+          "<"
+        )
+        .set(
+          moonRef.current.position,
+          {
+            x: 0,
+            y: 0,
+            z: 0,
+          },
+          "<"
+        )
+        .set(
+          limitlessRef.current.position,
+          {
+            x: 0,
+            y: 4,
+            z: 0,
+          },
+          "<"
+        )
+        .set(limitlessRef.current.scale, {
+          x: 0.75,
+          y: 0.75,
+          z: 0.75,
+        })
+        // * START ANIMATION
+        .to(limitlessRef.current.position, {
+          x: 0,
+          y: 3,
+          z: 0,
+        })
+        .set(
+          limitlessRef.current.scale,
+          {
+            x: 1,
+            y: 1,
+            z: 1,
+          },
+          "<"
+        )
+        .set(starsRef.current.scale, { x: 1, y: 1, z: 1 }, "<+=0.5");
+    }, 500);
   });
 
   useEffect(() => {

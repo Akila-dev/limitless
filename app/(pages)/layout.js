@@ -25,7 +25,7 @@ export default async function RootLayout({ children }) {
     <html lang="en">
       <body className={`antialiased`}>
         <GalaxySceneWrapper data={page_data}>{children}</GalaxySceneWrapper>
-        <Logo />
+        <Logo fixed />
       </body>
     </html>
   );

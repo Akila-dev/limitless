@@ -10,6 +10,7 @@
 @theme inline {
   --color-bg: var(--background);
   --color-fg: var(--foreground);
+  --color-light: #1f1f1f;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
@@ -35,7 +36,7 @@ h2 {
 
 h1,
 .h1 {
-  @apply text-[12.5vw] xs:text-[40px] sm:text-[6vw] md:text-[6vw] lg:text-[4.5vw] leading-[1];
+  @apply text-[12.5vw] xs:text-[40px] sm:text-[6vw] md:text-[6vw] lg:text-[4.5vw] leading-[1.1];
 }
 
 h2,
@@ -92,12 +93,13 @@ label * {
 /* UTILITIES */
 .container,
 .container-x {
-  @apply px-1.25 md:px-4 xl:px-5 w-full max-w-screen overflow-x-hidden;
+  @apply px-1.25 md:px-4 xl:px-5 w-full max-w-screen !overflow-x-clip 
+  !overflow-y-visible;
 }
 
 .container,
 .container-y {
-  @apply py-4 xl:py-5 w-full max-w-screen overflow-x-hidden;
+  @apply py-4 xl:py-5 w-full max-w-screen !overflow-x-clip !overflow-y-visible;
 }
 
 .pb {

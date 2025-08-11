@@ -1,18 +1,22 @@
 "use client";
 
 import { useRef } from "react";
+import Link from "next/link";
 
 import Image from "next/image";
 import bulletpoint from "@/assets/images/bulletpoint.png";
 import { CardsAnimationWrapper } from "@/components";
 
-const BulletList = ({ data }) => {
+const BulletList = ({ data, tightSpacing }) => {
   const cardsRef = useRef([]);
 
   return (
-    <CardsAnimationWrapper className="space-y-0.5" childrenRefs={cardsRef}>
+    <CardsAnimationWrapper
+      className={tightSpacing ? "" : "space-y-0.5"}
+      childrenRefs={cardsRef}
+    >
       {data &&
-        data.map(({ title, description }, i) => (
+        data.map(({ title, description, url }, i) => (
           <div
             ref={(el) => (cardsRef.current[i] = el)}
             key={i}
@@ -28,7 +32,16 @@ const BulletList = ({ data }) => {
               className="w-5.5 h-auto object-contain"
             />
             <div className="pt-0.5">
-              <h3>{title}</h3>
+              {url ? (
+                <Link
+                  href={url}
+                  className="!font-base h3 hover:scale-105 duration-700 transition-transform"
+                >
+                  {title}
+                </Link>
+              ) : (
+                <h3>{title}</h3>
+              )}
               <p className="xs">{description}</p>
             </div>
           </div>

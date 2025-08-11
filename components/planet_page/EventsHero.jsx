@@ -29,7 +29,6 @@ const EventsHero = ({
   const containerRef = useRef();
   const bannerRef = useRef();
   const cardsRefs = useRef([]);
-  const shareCardsRefs = useRef([]);
 
   const pathname = usePathname();
   const [fullUrl, setFullUrl] = useState("");
@@ -117,7 +116,6 @@ const EventsHero = ({
         </div>
         <CardsAnimationWrapper
           className="pt-1 flex items-center gap-0.75"
-          childrenRefs={shareCardsRefs}
           delay={2.5}
         >
           <p className="">Share on:</p>

@@ -65,7 +65,9 @@ export default function GalaxySceneCanvasWrapper({ data, children }) {
         </Canvas>
       </div>
 
-      <IntroAnimationWrapper>{children}</IntroAnimationWrapper>
+      <IntroAnimationWrapper>
+        <div className="relative">{children}</div>
+      </IntroAnimationWrapper>
     </>
   );
 }

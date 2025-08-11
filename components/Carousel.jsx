@@ -74,7 +74,34 @@ const SlideNormal = ({ ref, image, alt, name, slug, date, tag, location }) => (
   </Link>
 );
 
-const NavigationButtons = ({ small }) => {
+const BlogSlide = ({ ref, image, title, excerpt, slug }) => (
+  <Link
+    ref={ref}
+    href={`/events/${slug}`}
+    className="w-full h-12 border-[0.1em] border-fg rounded-[0.5em] overflow-clip block !p-0"
+  >
+    <div className="relative h-full">
+      <Image
+        src={image}
+        width={350}
+        height={200}
+        alt={title}
+        className="w-full h-full object-cover"
+      />
+      <div className="absolute top-0 left-0 w-full h-full px-1 py-0.75 flex flex-col justify-end gap-0.5 bg-gradient-to-b from-transparent to-black">
+        <div className="flex-v-center flex-wrap !gap-x-1 !gap-y-0.25"></div>
+        <p className="text-white w-full text-left uppercase !font-medium text-wrap overflow-hidden text-ellipsis max-h-3 max-w-16">
+          {title}
+        </p>
+        <p className="xs w-full text-left !font-medium text-wrap overflow-hidden text-ellipsis max-h-3 max-w-16">
+          {excerpt}
+        </p>
+      </div>
+    </div>
+  </Link>
+);
+
+const NavigationButtons = ({ small, isBlog }) => {
   const swiper = useSwiper();
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
@@ -102,7 +129,9 @@ const NavigationButtons = ({ small }) => {
       className={`w-full flex-between !text-white py-1 ${small ? "!justify-end" : ""}`}
     >
       {!small && (
-        <h3 className="p-lg !font-base !font-medium">RECENT EVENTS</h3>
+        <h3 className="p-lg !font-base !font-medium">
+          {isBlog ? "RECENT BLOGS" : "RECENT EVENTS"}
+        </h3>
       )}
       <div className="flex-v-center !gap-0.5">
         <button onClick={() => swiper.slidePrev()}>
@@ -120,7 +149,7 @@ const NavigationButtons = ({ small }) => {
   );
 };
 
-const Carousel = ({ data, small, delay }) => {
+const Carousel = ({ data, small, delay, isBlog }) => {
   const [isDesktop, setIsDesktop] = useState();
   const cardsRefs = useRef([]);
 
@@ -140,12 +169,12 @@ const Carousel = ({ data, small, delay }) => {
       // animationType="fade-in"
       childrenRefs={cardsRefs}
       onlyOnce={!small}
-      delay={delay ? delay : small ? 0 : 1}
+      delay={delay ? delay : 0}
     >
       {/* Slider */}
       {data && data.length > 0 ? (
         <Swiper
-          spaceBetween={isDesktop ? (small ? 10 : 40) : 10}
+          spaceBetween={isDesktop ? (isBlog ? 15 : small ? 10 : 40) : 10}
           pagination={{
             el: ".swiper-pagination-custom",
             type: "progressbar",
@@ -153,39 +182,53 @@ const Carousel = ({ data, small, delay }) => {
           }}
           mousewheel={true}
           modules={[Mousewheel, Pagination]}
-          slidesPerView={isDesktop ? (small ? 2.5 : 3) : small ? 2 : 2}
+          slidesPerView={
+            isDesktop ? (isBlog ? 5 : small ? 2.5 : 3) : small ? 2 : 2
+          }
           className="eventsSwiper"
         >
-          {data.map(({ name, date, image, slug, location, tag }, i) => (
-            <SwiperSlide key={i}>
-              {small ? (
-                <SlideSmall
-                  ref={(el) => (cardsRefs.current[i] = el)}
-                  image={image.asset.url}
-                  alt={image.alt}
-                  name={name}
-                  slug={slug.current}
-                />
-              ) : (
-                <SlideNormal
-                  ref={(el) => (cardsRefs.current[i] = el)}
-                  name={name}
-                  date={date}
-                  image={image.asset.url}
-                  alt={image.alt}
-                  slug={slug.current}
-                  location={location}
-                  tag={tag.name}
-                />
-              )}
-            </SwiperSlide>
-          ))}
+          {isBlog
+            ? data.map(({ title, excerpt, mainImage, slug }, i) => (
+                <SwiperSlide key={i}>
+                  <BlogSlide
+                    ref={(el) => (cardsRefs.current[i] = el)}
+                    image={mainImage.asset.url}
+                    title={title}
+                    excerpt={excerpt}
+                    slug={slug.current}
+                  />
+                </SwiperSlide>
+              ))
+            : data.map(({ name, date, image, slug, location, tag }, i) => (
+                <SwiperSlide key={i}>
+                  {small ? (
+                    <SlideSmall
+                      ref={(el) => (cardsRefs.current[i] = el)}
+                      image={image.asset.url}
+                      alt={image.alt}
+                      name={name}
+                      slug={slug.current}
+                    />
+                  ) : (
+                    <SlideNormal
+                      ref={(el) => (cardsRefs.current[i] = el)}
+                      name={name}
+                      date={date}
+                      image={image.asset.url}
+                      alt={image.alt}
+                      slug={slug.current}
+                      location={location}
+                      tag={tag.name}
+                    />
+                  )}
+                </SwiperSlide>
+              ))}
 
           {small && (
             <div className="swiper-pagination-custom" slot="container-end" />
           )}
           <div slot="container-start">
-            <NavigationButtons small={small} />
+            <NavigationButtons small={small} isBlog={isBlog} />
           </div>
         </Swiper>
       ) : (

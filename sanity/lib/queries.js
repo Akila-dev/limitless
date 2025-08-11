@@ -68,3 +68,66 @@ export const GET_EVENT_DATA =
   tag -> {name},
   reservation
 }`);
+
+// ! BLOG
+export const GET_BLOG_LIST =
+  defineQuery(`*[_type=="blog" && defined(slug.current)]{
+    title,
+    author->{name},
+    publishedAt,
+    categories[]->{
+      title
+    },
+    excerpt,
+    mainImage{
+      asset-> {
+        __id,
+        url
+      }
+    },
+    slug
+  }`);
+
+export const GET_RECENT_BLOG_LIST =
+  defineQuery(`*[_type=="blog" && defined(slug.current)][0...10] | order(date desc) | order(_createdAt asc){
+    title,
+    excerpt,
+    mainImage{
+      asset-> {
+        __id,
+        url
+      }
+    },
+    slug
+  }`);
+
+export const GET_BLOG_PAGE_STATIC_PARAMS =
+  defineQuery(`*[_type=="blog" && defined(slug.current)]{
+  slug
+}`);
+export const GET_SINGLE_BLOG =
+  defineQuery(`*[_type=="blog" && slug.current == $slug][0]{
+    title,
+    author->{name},
+    publishedAt,
+    categories[]->{
+      title
+    },
+    excerpt,
+    mainImage{
+      asset-> {
+        __id,
+        url
+      }
+    },
+    body[]{
+      _type,
+      asset->{
+          url
+        },
+      children[]{
+        _type,
+        text,
+      }
+    }
+  }`);

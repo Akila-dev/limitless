@@ -63,6 +63,16 @@ const CardsAnimationWrapper = ({
             // delay: immediate ? 0 : 1,
             duration: 1,
           });
+        } else {
+          {
+            tl.from(containerRef.current, {
+              delay: delay ? delay : 0,
+              duration: 0.5,
+            }).from(containerRef.current.children, {
+              // delay: immediate ? 0 : 1,
+              duration: 1,
+            });
+          }
         }
 
         ScrollTrigger.refresh();

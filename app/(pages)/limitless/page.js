@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 // ! COMPONENTS
-import { LimitlessCanvas, Text4R3F, IntroAnimationWrapper } from "@/components";
+import { Text4R3F } from "@/components";
 
 import logo from "@/assets/images/limitless_letters.png";
 import metaverse_bg from "@/assets/images/metaverse-x.png";
@@ -9,10 +9,6 @@ import metaverse_bg from "@/assets/images/metaverse-x.png";
 export default function Limitless() {
   return (
     <div className="pt-[35vh]">
-      {/* <LimitlessCanvas trigger="#sphere-trigger" /> */}
-
-      {/* <IntroAnimationWrapper>
-        <> */}
       {/* Sphere Logo */}
       <div className="absolute top-0 left-0 w-full h-[22.5vh] lg:h-[20vh] flex-center !items-end">
         <div className="w-[60vw] md:w-[40vw] lg:w-[35vh]">
@@ -43,8 +39,6 @@ export default function Limitless() {
           priority
         />
       </div>
-      {/* </>
-      </IntroAnimationWrapper> */}
     </div>
   );
 }

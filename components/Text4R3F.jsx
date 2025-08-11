@@ -6,7 +6,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SplitText from "gsap/SplitText";
 
-import { Button } from "@/components";
+import { Button, CardsAnimationWrapper } from "@/components";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 
@@ -18,6 +18,7 @@ const Text4R3F = ({
   center,
   delay,
   titleClassName,
+  children,
 }) => {
   const containerRef = useRef();
   const titleRef = useRef();
@@ -178,7 +179,9 @@ const Text4R3F = ({
         </p>
       )}
       {buttons && (
-        <div className="flex items-center justify-start flex-wrap pt-2.25">
+        <div
+          className={`flex items-center flex-wrap pt-2.25 ${center ? "justify-center" : "justify-start"}`}
+        >
           {buttons.map((button, i) => (
             // <Button key={i} text={button.text} href={button.url} />
             <div
@@ -191,6 +194,7 @@ const Text4R3F = ({
           ))}
         </div>
       )}
+      {children && <CardsAnimationWrapper>{children}</CardsAnimationWrapper>}
     </div>
   );
 };

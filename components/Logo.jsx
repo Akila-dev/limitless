@@ -4,9 +4,13 @@ import Image from "next/image";
 
 import logo from "@/assets/images/limitless_logo.png";
 
-const Logo = () => {
+const Logo = ({ fixed }) => {
   return (
-    <div className="fixed top-0 left-0 container-x py-1">
+    <div
+      className={
+        fixed ? "fixed top-0 left-0 container-x py-1 flex justify-start" : ""
+      }
+    >
       <Link href="/" className="">
         <Image
           src={logo}

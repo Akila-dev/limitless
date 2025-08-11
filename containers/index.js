@@ -5,3 +5,4 @@ export { default as TestScene } from "./TestScene.jsx";
 
 // Data Fetching Containers
 export { default as EventsCarousel } from "./EventsCarousel.jsx";
+export { default as BlogCarousel } from "./BlogCarousel.jsx";

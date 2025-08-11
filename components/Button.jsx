@@ -6,9 +6,11 @@ import Link from "next/link";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 
+import { FaChevronLeft } from "react-icons/fa6";
+
 gsap.registerPlugin(useGSAP);
 
-const Button = ({ text, href, onClick }) => {
+const Button = ({ text, href, onClick, back }) => {
   const container = useRef();
   const { contextSafe } = useGSAP({ scope: container });
 
@@ -58,7 +60,8 @@ const Button = ({ text, href, onClick }) => {
       ref={container}
     >
       <span className="clip-bg"></span>
-      <span className="relative z-1 group-hover:text-bg duration-700">
+      <span className="relative z-1 group-hover:text-bg duration-700 flex-center">
+        {back && <FaChevronLeft />}
         {text}
       </span>
     </Link>
@@ -72,7 +75,8 @@ const Button = ({ text, href, onClick }) => {
       ref={container}
     >
       <span className="clip-bg"></span>
-      <span className="relative z-1 group-hover:text-bg duration-700">
+      <span className="relative z-1 group-hover:text-bg duration-700 flex-center">
+        {back && <FaChevronLeft />}
         {text}
       </span>
     </button>
