@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components";
 
-const SubscribeForm = () => {
+const SubscribeForm = ({ filledStyle }) => {
   const [email, setEmail] = useState("");
 
   const handleSubscribe = () => {

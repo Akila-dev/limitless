@@ -118,11 +118,15 @@ export default function Planet(props) {
       const tl = gsap.timeline();
 
       tl.to(sphereMaterialRef1.current, {
-        size: 0.04,
+        size: props.dotSize ? props.dotSize : props.largeDots ? 0.08 : 0.04,
       }).to(
         sphereMaterialRef2.current,
         {
-          size: 0.02,
+          size: props.dotSize
+            ? props.dotSize * 0.7
+            : props.largeDots
+              ? 0.05
+              : 0.02,
         },
         "<"
       );
@@ -154,7 +158,7 @@ export default function Planet(props) {
           <PointMaterial
             ref={sphereMaterialRef1}
             color={light_color}
-            size={props.largeDots ? 0.08 : 0.04}
+            size={props.dotSize ? props.dotSize : props.largeDots ? 0.08 : 0.04}
             sizeAttenuation
             depthWrite={false}
             transparent
@@ -165,7 +169,13 @@ export default function Planet(props) {
           <PointMaterial
             ref={sphereMaterialRef2}
             color={light_color}
-            size={props.largeDots ? 0.05 : 0.02}
+            size={
+              props.dotSize
+                ? props.dotSize * 0.7
+                : props.largeDots
+                  ? 0.05
+                  : 0.02
+            }
             sizeAttenuation
             depthWrite={false}
             transparent

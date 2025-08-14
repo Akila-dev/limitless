@@ -19,6 +19,8 @@ const Text4R3F = ({
   delay,
   titleClassName,
   children,
+  onlyOnce,
+  animateImmediately,
 }) => {
   const containerRef = useRef();
   const titleRef = useRef();
@@ -64,8 +66,10 @@ const Text4R3F = ({
     tlRef.current = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
-        start: "top top+=95%",
-        toggleActions: "restart none none reset",
+        start: animateImmediately ? "top bottom" : "top top+=95%",
+        toggleActions: onlyOnce
+          ? "play none none none"
+          : "play pause resume reset",
       },
       defaults: {
         duration: 1,
@@ -75,6 +79,7 @@ const Text4R3F = ({
         stagger: 0.1,
       },
     });
+    tlRef.current.set(containerRef.current, { opacity: 1 });
     // * TITLE ANIMATION
     if (titleRef.current && splitHRef.current) {
       tlRef.current.from(splitHRef.current.words, {
@@ -130,7 +135,9 @@ const Text4R3F = ({
   useGSAP(
     () => {
       const ctx = gsap.context(() => {
-        splitAndAnimate();
+        document.fonts.ready.then(() => {
+          splitAndAnimate();
+        });
 
         // Resize listener with debounce
         let resizeTimeout;
@@ -161,7 +168,7 @@ const Text4R3F = ({
   return (
     <div
       ref={containerRef}
-      className={`space-y-0.5 lg:space-y-0.25 ${center ? "!text-center" : ""}`}
+      className={`space-y-0.5 lg:space-y-0.25 opacity-0 ${center ? "text-center" : ""} ${center ? "!text-center" : ""}`}
     >
       {title && (
         <h1 ref={titleRef} className={titleClassName ? titleClassName : ""}>

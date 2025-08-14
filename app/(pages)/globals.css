@@ -49,6 +49,11 @@ h3,
   @apply text-[5.5vw] xs:text-xl sm:text-[3.5vw] md:text-[3vw] lg:text-[2vw] font-medium font-heading;
 }
 
+h4,
+.h4 {
+  @apply text-[5.5vw] xs:text-xl sm:text-[3.5vw] md:text-[3vw] lg:text-[1.75vw] font-medium font-heading;
+}
+
 .p-lg {
   @apply text-[4vw] xs:text-base md:text-[2vw] lg:text-[1.5vw] leading-[1.5] !font-light font-heading;
 }

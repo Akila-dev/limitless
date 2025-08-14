@@ -42,6 +42,7 @@ const GalaxyScene = ({ data, windowSize }) => {
   const planetsOrbitRef = useRef(null);
   const planetRefs = useRef([]);
   const dragWrapperRef = useRef(null);
+  const blogPlanetRef = useRef(null);
 
   const { contextSafe } = useGSAP({ scope: container });
 
@@ -82,10 +83,6 @@ const GalaxyScene = ({ data, windowSize }) => {
     : Math.PI * 4 +
         Math.PI * 0.62 +
         (Math.PI * 2 * activePlanet) / data?.length || 8;
-  // * Limitless
-  const limitlessPageLimitlessScale = 4;
-  const limitlessPageYStart = h * 1;
-  const limitlessPageYEnd = h * 1;
 
   // * DRAGGING FUNCTION VARIABLES
   const isDragging = useRef(false);
@@ -265,7 +262,7 @@ const GalaxyScene = ({ data, windowSize }) => {
       toHome();
     }
     // * 2. TO PLANET PAGE
-    if (previousPathname.current !== "/" && pathname.includes("/page/")) {
+    else if (previousPathname.current !== "/" && pathname.includes("/page/")) {
       console.log("to planet page");
       toPlanetPage();
     }
@@ -279,9 +276,12 @@ const GalaxyScene = ({ data, windowSize }) => {
       planetToHome();
     }
     // * 5. TO LIMITLESS PAGE
-    if (pathname === "/limitless") {
+    else if (pathname === "/limitless") {
       console.log("to limitless page");
       toLimitlessPage();
+    } else if (pathname === "/blog") {
+      console.log("to blog archive page");
+      toBlogArchivePage();
     }
     // * NORMAL PAGES WITHOUT TRANSITIONS
     else {
@@ -300,25 +300,6 @@ const GalaxyScene = ({ data, windowSize }) => {
   const transitionComplete = () => {
     setIntroFinished();
     previousPathname.current = pathname;
-  };
-
-  // ! STOP/PAUSE ALL TIMELINE EXCEPT NEW TIMELINE
-  const stopAllTimelineExcept = (newTimeline, onlyStars) => {
-    if (homeTL.current && homeTL !== newTimeline) {
-      homeTL.current.pause();
-    }
-    if (limitlessTL.current && limitlessTL !== newTimeline) {
-      limitlessTL.current.pause();
-    }
-    if (planetsTL.current && planetsTL !== newTimeline) {
-      planetsTL.current.pause();
-    }
-    if (eventTL.current && eventTL !== newTimeline) {
-      eventTL.current.pause();
-    }
-    if (noTransitionTL.current && noTransitionTL !== newTimeline) {
-      noTransitionTL.current.pause();
-    }
   };
 
   const toNoTransition = (animate) => {
@@ -350,7 +331,8 @@ const GalaxyScene = ({ data, windowSize }) => {
       })
       .set(planetsOrbitRef.current.scale, { x: 3, y: 3, z: 3 })
       .set(planetsOrbitRef.current.position, { x: 0, y: -1, z: 0 })
-      .set(planetsOrbitRef.current.rotation, { x: 0, y: 0, z: 0 });
+      .set(planetsOrbitRef.current.rotation, { x: 0, y: 0, z: 0 })
+      .set(blogPlanetRef.current.position, { x: 6, y: 3, z: 0 });
 
     if (animate) {
       tl.current.to(starsRef.current.scale, {
@@ -693,7 +675,7 @@ const GalaxyScene = ({ data, windowSize }) => {
           y: 3,
           z: 0,
         })
-        .set(
+        .to(
           limitlessRef.current.scale,
           {
             x: 1,
@@ -702,7 +684,36 @@ const GalaxyScene = ({ data, windowSize }) => {
           },
           "<"
         )
-        .set(starsRef.current.scale, { x: 1, y: 1, z: 1 }, "<+=0.5");
+        .to(starsRef.current.scale, { x: 1, y: 1, z: 1 }, "<+=0.5");
+    }, 500);
+  });
+
+  // ! TRANSITION ANIMATION 6: TO BLOG ARCHIVE PAGE (FOR MOVING TO BLOG ARCHIVE PAGE)
+  const toBlogArchivePage = contextSafe(() => {
+    toNoTransition();
+
+    setTimeout(() => {
+      tl.current = gsap.timeline({
+        defaults: { duration: 2, ease: "expo.inOut" },
+        onStart: () => {
+          setShowLimitlessText(false);
+          setShowPlanetsText(false);
+          setPauseAutoRotation(true);
+        },
+        onComplete: () => {
+          transitionComplete();
+        },
+      });
+
+      tl.current.to(starsRef.current.scale, { x: 1, y: 1, z: 1 }).to(
+        blogPlanetRef.current.position,
+        {
+          x: 0.5,
+          y: 1.5,
+          z: 2,
+        },
+        "<+=1"
+      );
     }, 500);
   });
 
@@ -719,6 +730,7 @@ const GalaxyScene = ({ data, windowSize }) => {
         <Stars ref={starsRef} scale={5} />
 
         <group ref={scrollRef}>
+          {/* LIMITLESS SUN AND MOON */}
           <group ref={limitlessRef} position={[0, limitlessY, 0]}>
             <Sun ref={sunRef} scale={0} position-y={0.3} />
             <Moon
@@ -732,6 +744,7 @@ const GalaxyScene = ({ data, windowSize }) => {
               mobile={w < h}
             />
           </group>
+          {/* PLANETS ORBIT GROUP */}
           <group
             rotation={planetOrbitGroupRotation}
             position={planetOrbitGroupPosition}
@@ -762,6 +775,16 @@ const GalaxyScene = ({ data, windowSize }) => {
                 ))}
               </group>
             </group>
+          </group>
+          {/* BLOG ARCHIVE PLANET */}
+          <group>
+            <Planet
+              ref={blogPlanetRef}
+              position={[6, 3, 0]}
+              radius={1}
+              scale={1.5}
+              dotSize={0.08}
+            />
           </group>
         </group>
       </group>

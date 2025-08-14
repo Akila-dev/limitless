@@ -9,152 +9,104 @@ import Link from "next/link";
 import { FaClock } from "react-icons/fa6";
 import { LiaLongArrowAltRightSolid } from "react-icons/lia";
 import { CgArrowRight } from "react-icons/cg";
+import { FaChevronRight } from "react-icons/fa6";
 
-import { Text4R3F, CardsAnimationWrapper, EmptyData } from "@/components";
+import {
+  Text4R3F,
+  CardsAnimationWrapper,
+  EmptyData,
+  Button,
+  SubscribeForm,
+} from "@/components";
+// import BlogImageGenerator from "@/components/blog/BlogImageGenerator";
+
+import blog_sphere from "@/assets/images/blog_sphere.png";
 
 const BlogCard = ({ title, date, image, slug, excerpt, author }) => {
   return (
-    <div className="space-y-0.5 rounded bg-white/5 backdrop-blur border-[0.1em] border-fg/20">
-      <Image
-        src={image}
-        alt={title}
-        width={400}
-        height={300}
-        className="object-cover h-14 w-full rounde overflow-clip"
-      />
-      <div className="p-1">
-        <Link href={`/blog/${slug}`} className="p-lg !font-base !font-medium">
-          {title}
-        </Link>
-        <p className="xs text-white w-full text-left text-wrap overflow-hidden text-ellipsis max-h-3 my-1">
-          {excerpt}
-        </p>
-        <h4 className="p !font-medium">
-          {author?.name} - {moment(date).format("l")}
-        </h4>
-      </div>
-    </div>
-  );
-};
-
-const RecentBlogCard = ({ title, date, image, slug }) => {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-7 roundedbg-white/5 backdrop-blur border-[0.1em] border-fg/20">
-      <div className="col-span-1 md:col-span-3">
+    <div className="space-y-1">
+      <div>
         <Image
-          src={image}
+          src={blog_sphere}
           alt={title}
           width={400}
-          height={300}
-          className="object-cover h-11.5 w-full"
+          height={400}
+          className="object-contain h-auto w-full"
         />
       </div>
-      <div className="p-1 col-span-1 md:col-span-4 flex flex-col gap-1 justify-between">
-        <div>
-          <Link
-            href={`/blog/${slug}`}
-            className="p-lg !font-base !font-medium leading-[1.2]"
-          >
-            {title}
-          </Link>
-          <p className="xs !font-medium mt-0.5">
-            <FaClock className="inline-block mr-0.5" />{" "}
-            {moment(date).format("l")}
-          </p>
-        </div>
+      <div className="">
         <Link
-          href={`/blog/${slug}`}
-          className="xs uppercase !font-base !font-medium"
+          href={`/blog/${slug}` || "/blog"}
+          className="h4 !font-base !font-medium uppercase !leading-[1]"
         >
-          Read More <CgArrowRight className="inline-block ml-1" />
+          {title}
         </Link>
+        <div className="flex-v-center">
+          <p className="xs text-white w-full text-left text-wrap overflow-hidden text-ellipsis max-h-3 my-1">
+            {excerpt}
+          </p>
+          <Link
+            href={`/blog/${slug}` || "/blog"}
+            className="min-w-2 flex-center hover:scale-110 transform duration-700"
+          >
+            <FaChevronRight className="size-1.5" />
+          </Link>
+        </div>
       </div>
     </div>
   );
 };
 
 const BlogArchive = ({ data }) => {
-  const [mostRecentBlogs, setMostRecentBlogs] = useState(data?.slice(0, 3));
-
-  useEffect(() => {
-    setMostRecentBlogs(data?.slice(0, 3));
-  }, [data]);
-
   return (
-    <div className="py-5 space-y-4">
-      <div className="container-x space-y-3">
-        <div className="max-w-2 mx-auto">
-          {/* <Text4R3F
-            title="Our Blog"
-            subtitle="Lorem ipsum dolor sit amet lorem ipsum dolor sit amet"
-            center
-          /> */}
+    <div className="py-5">
+      {/* ! RECENT POSTS */}
+      <div className="lg:min-h-screen w-full relative">
+        <div className="absolute top-0 right-0 w-[100vw] md:w-[75vw] lg:w-[65vw] h-35 md:h-[80%] lg:h-auto">
+          {/* Space For Planet Sphere */}
         </div>
+        {/* TEXT CONTENT */}
+        <div className="left-0 w-full container grid-2-v2">
+          <div className="pt-25 md:pt-3">
+            <CardsAnimationWrapper className="flex mb-3">
+              <Button text="Back to Galaxy" href="/" back />
+            </CardsAnimationWrapper>
+            <Text4R3F
+              title={"THE FUTURE IS LIMITLESS"}
+              paragraph={
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+              }
+              titleClassName="h2 !font-base pb-0.5"
+              onlyOnce
+              animateImmediately
+            />
+            <CardsAnimationWrapper className="flex mt-1">
+              <SubscribeForm filledStyle />
+            </CardsAnimationWrapper>
+          </div>
+        </div>
+      </div>
+
+      <div className="container-x">
         {data && data.length > 0 ? (
           <>
-            {/* ! RECENT POSTS */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-1.5">
-              {/* Most Recent Post */}
-              <CardsAnimationWrapper className="col-span-1 md:col-span-3">
-                <div className="relative h-15 md:h-25 rounded border-[0.1em] border-fg/20">
-                  <Image
-                    src={mostRecentBlogs[0].mainImage.asset.url}
-                    alt={mostRecentBlogs[0].title}
-                    width={400}
-                    height={300}
-                    className="absolute top-0 left-0 h-full w-full object-cover"
-                  />
-                  <div className="h-full p-1 lg:p-2 bg-gradient-to-b from-black/20 via-black/50 to-black relative flex flex-col justify-end !font-base !font-medium">
-                    <Link
-                      href={`/blog/${mostRecentBlogs[0].slug.current}`}
-                      className="h3"
-                    >
-                      {mostRecentBlogs[0].title}
-                    </Link>
-                    <p className="pt-0.5 pb-1">
-                      <FaClock className="xs inline-block mr-0.5 text-white" />
-                      {moment(mostRecentBlogs[0].publishedAt).format("l")}
-                    </p>
-                    <p className="xs text-white w-full text-left text-wrap overflow-hidden text-ellipsis max-h-3">
-                      {mostRecentBlogs[0].excerpt}
-                    </p>
-                  </div>
-                </div>
-              </CardsAnimationWrapper>
-              <CardsAnimationWrapper className="col-span-1 md:col-span-2 space-y-1.5">
-                {mostRecentBlogs.slice(1, 3).map((item, index) => (
-                  <RecentBlogCard
-                    key={index}
-                    title={item.title}
-                    date={item.publishedAt}
-                    image={item.mainImage.asset.url}
-                    slug={item.slug.current}
-                  />
-                ))}
-              </CardsAnimationWrapper>
-            </div>
+            <CardsAnimationWrapper
+              className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-1 xl:gap-4"
+              onlyOnce
+            >
+              {data?.map((item, index) => (
+                <BlogCard
+                  key={index}
+                  title={item?.title}
+                  slug={item?.slug?.current}
+                  excerpt={item?.excerpt}
+                />
+              ))}
+            </CardsAnimationWrapper>
           </>
         ) : (
           <EmptyData text="No posts yet" />
         )}
-      </div>
-      <div className="container-x">
-        <CardsAnimationWrapper
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1 xl:gap-4"
-          onlyOnce
-        >
-          {data.map((item, index) => (
-            <BlogCard
-              key={index}
-              title={item.title}
-              date={item.publishedAt}
-              image={item.mainImage.asset.url}
-              slug={item.slug.current}
-              excerpt={item.excerpt}
-              author={item.author}
-            />
-          ))}
-        </CardsAnimationWrapper>
       </div>
     </div>
   );

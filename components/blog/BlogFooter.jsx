@@ -23,10 +23,13 @@ const FooterSection = () => {
   return (
     <div className="bg-light container-x py-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3 lg:gap-1">
-        <CardsAnimationWrapper className="lg:col-span-2">
+        <CardsAnimationWrapper className="lg:col-span-2" onlyOnce>
           <Logo />
         </CardsAnimationWrapper>
-        <CardsAnimationWrapper className="lg:col-span-3 grid grid-cols-2 gap-1">
+        <CardsAnimationWrapper
+          className="lg:col-span-3 grid grid-cols-2 gap-1"
+          onlyOnce
+        >
           {[...navLinks, ...navLinks].map((link, index) => (
             <Link
               key={index}
@@ -37,7 +40,10 @@ const FooterSection = () => {
             </Link>
           ))}
         </CardsAnimationWrapper>
-        <CardsAnimationWrapper className="lg:col-span-3 flex-center flex-col !gap-2 !items-start lg:!items-center">
+        <CardsAnimationWrapper
+          className="lg:col-span-3 flex-center flex-col !gap-2 !items-start lg:!items-center"
+          onlyOnce
+        >
           <p className="lg:text-center">
             LOREM IPSUM DOLOR SIT AMET, CONSECTETUR.
           </p>
