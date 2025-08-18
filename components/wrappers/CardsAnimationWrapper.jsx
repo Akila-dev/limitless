@@ -7,10 +7,6 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 
-import Image from "next/image";
-import bulletpoint from "@/assets/images/bulletpoint.png";
-import { Scroll } from "@react-three/drei";
-
 gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 
 const CardsAnimationWrapper = ({

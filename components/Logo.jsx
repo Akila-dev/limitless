@@ -8,10 +8,12 @@ const Logo = ({ fixed }) => {
   return (
     <div
       className={
-        fixed ? "fixed top-0 left-0 container-x py-1 flex justify-start" : ""
+        fixed
+          ? "fixed top-0 left-0 container-x py-1 flex justify-start pointer-events-none"
+          : ""
       }
     >
-      <Link href="/" className="">
+      <Link href="/" className="pointer-events-auto">
         <Image
           src={logo}
           alt="limitless"

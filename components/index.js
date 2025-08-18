@@ -4,11 +4,12 @@ export { default as SceneWrapper } from "./landing_page/SceneWrapper.jsx";
 // SCENES
 export { default as GalaxyScene } from "./scenes/GalaxyScene.jsx";
 
-// OBJECTS
+// 3D OBJECTS
 export { default as Sun } from "./Sun.jsx";
 export { default as Moon } from "./Moon.jsx";
 export { default as Planet } from "./Planet.jsx";
 export { default as Stars } from "./Stars.jsx";
+export { default as VisualConnection } from "./VisualConnection.jsx";
 
 // 2D ELEMENTS
 export { default as Text4R3F } from "./Text4R3F.jsx";
@@ -35,6 +36,7 @@ export { default as CenterSphere } from "./planet_page/CenterSphere.jsx";
 export { default as BulletPointSection } from "./planet_page/BulletPointSection.jsx";
 export { default as Footer } from "./planet_page/Footer.jsx";
 export { default as EventsHero } from "./planet_page/EventsHero.jsx";
+export { default as EventsArchive } from "./planet_page/EventsArchive.jsx";
 
 // WRAPPERS
 export { default as IntroAnimationWrapper } from "./wrappers/IntroAnimationWrapper.jsx";

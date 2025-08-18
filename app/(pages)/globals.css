@@ -51,7 +51,7 @@ h3,
 
 h4,
 .h4 {
-  @apply text-[5.5vw] xs:text-xl sm:text-[3.5vw] md:text-[3vw] lg:text-[1.75vw] font-medium font-heading;
+  @apply text-[4.5vw] xs:text-xl sm:text-[3.5vw] md:text-[3vw] lg:text-[1.75vw] font-medium font-heading;
 }
 
 .p-lg {

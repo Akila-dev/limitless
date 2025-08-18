@@ -7,14 +7,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRouter, usePathname } from "next/navigation";
 
-import {
-  Stars,
-  Sun,
-  Moon,
-  Planet,
-  SelectiveBloom,
-  VisualConnection,
-} from "@/components";
+import { Stars, Sun, Moon, Planet, SelectiveBloom } from "@/components";
 
 // ! ZUSTAND
 import { useIntroStore } from "@/utils/store.js";
@@ -276,7 +269,6 @@ const GalaxyScene = ({ data, windowSize }) => {
     ) {
       console.log("to planet page");
       toPlanetPage();
-      // testVisualConnection();
     }
     // * 3. HOME TO PLANET PAGE
     else if (
@@ -437,115 +429,29 @@ const GalaxyScene = ({ data, windowSize }) => {
         defaults: { duration: 1.2, ease: "expo.inOut" },
         onStart: () => {
           setPauseAutoRotation(true);
-          setPlanetIsTransitioning(true);
           setFinishedPlanetTransition(false);
-
-          setShowLimitlessText(true);
-          setShowPlanetsText(true);
         },
         onComplete: () => {
-          setFinishedPlanetTransition(true); // Make active planet's dot larger and fadeout other planets
-          setShowLimitlessText(false);
-          setShowPlanetsText(false);
-          transitionComplete();
+          setTimeout(() => {
+            homeToPlanet();
+          }, 1000);
         },
       });
 
-      // Setup initial scene
       tl.current
-        .set(planetsOrbitRef.current.scale, { x: 1, y: 1, z: 1, duration: 3 })
-        .set(planetsOrbitRef.current.position, { y: 0, duration: 3 })
-        .set(sunRef.current.position, {
+        .to(sunRef.current.scale, {
+          x: homeLimitlessScale * 0.5,
+          y: homeLimitlessScale * 0.5,
+          z: homeLimitlessScale * 0.5,
+          duration: 2,
+        })
+        .to(sunRef.current.position, {
           x: homeLimitlessEndX,
           y: 0,
           z: 0,
           duration: 4,
         })
-        .set(starsRef.current.scale, {
-          x: 1,
-          y: 1,
-          z: 1,
-          duration: 3,
-        })
-        .to(limitlessRef.current.scale, {
-          x: 0,
-          y: 0,
-          z: 0,
-          duration: 0.5,
-        })
         .to(
-          starsRef.current.scale,
-          {
-            x: 1,
-            y: 1,
-            z: 1,
-            duration: 2,
-          },
-          "<"
-        );
-
-      // Rotate the orbit group to focus on the selected planet
-      tl.current.to(
-        planetsOrbitRef.current.rotation,
-        {
-          x: -Math.PI * 0.12,
-          y: activePlanetRotationY,
-          duration: 2.5,
-        },
-        "<+=0.2"
-      );
-
-      // Move orbit group upward slightly (gives nice depth)
-      tl.current.to(
-        planetsOrbitRef.current.position,
-        {
-          y: w > h ? 0 : -1.3,
-          duration: 2.5,
-        },
-        "<"
-      );
-
-      // Scale up the active planet
-      tl.current.to(
-        planetRefs.current[activePlanet].scale,
-        {
-          x: 6,
-          y: 6,
-          z: 6,
-          duration: 2,
-        },
-        "<+=0.6"
-      );
-    }, 500);
-  });
-
-  const testVisualConnection = contextSafe(() => {
-    toNoTransition();
-
-    setTimeout(() => {
-      tl.current = gsap.timeline({
-        defaults: { duration: 1.2, ease: "expo.inOut" },
-        onStart: () => {
-          setPauseAutoRotation(true);
-          setPlanetIsTransitioning(true);
-          setFinishedPlanetTransition(false);
-
-          setShowLimitlessText(true);
-          setShowPlanetsText(true);
-        },
-        onComplete: () => {
-          // setFinishedPlanetTransition(true); // Make active planet's dot larger and fadeout other planets
-          // transitionComplete();
-          // setShowLimitlessText(false);
-          // setShowPlanetsText(false);
-        },
-      });
-
-      // Setup initial scene
-      tl.current
-        .set(planetsOrbitRef.current.scale, { x: 1, y: 1, z: 1, duration: 3 })
-        .set(planetsOrbitRef.current.position, { y: 0, duration: 3 })
-        .set(
           sunRef.current.scale,
           {
             x: homeLimitlessScale * 0.95,
@@ -556,18 +462,34 @@ const GalaxyScene = ({ data, windowSize }) => {
           },
           "<+=0.3"
         )
-        .set(sunRef.current.position, {
-          x: homeLimitlessEndX,
-          y: 0,
-          z: 0,
-          duration: 4,
-        })
-        .set(starsRef.current.scale, {
-          x: 1,
-          y: 1,
-          z: 1,
-          duration: 3,
-        });
+        .to(
+          planetsOrbitRef.current.scale,
+          { x: 1, y: 1, z: 1, duration: 3 },
+          "<+=1.2"
+        )
+        .to(planetsOrbitRef.current.position, { y: 0, duration: 3 }, "<+=0.2")
+        .to(
+          starsRef.current.scale,
+          {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: 3,
+          },
+          "<+=0.2"
+        )
+        .to(
+          planetsOrbitRef.current.rotation,
+          {
+            y: Math.PI * 4,
+            duration: 3,
+            onComplete: () => {
+              setShowLimitlessText(true);
+              setTimeout(() => setShowPlanetsText(true), 500);
+            },
+          },
+          "<+=0.3"
+        );
     }, 500);
   });
 
@@ -807,55 +729,26 @@ const GalaxyScene = ({ data, windowSize }) => {
             <group ref={dragWrapperRef}>
               <group ref={planetsOrbitRef} position-y={-1} scale={3}>
                 {planets_data.map((planet, i) => (
-                  <group key={i}>
-                    <Planet
-                      ref={(el) => (planetRefs.current[i] = el)}
-                      // key={i}
-                      label={planet.name}
-                      position={[
-                        Math.cos(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
-                        0,
-                        Math.sin(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
-                      ]}
-                      radius={planet.radius}
-                      scale={planetScale}
-                      showText={showPlanetsText}
-                      onClick={() => handlePlanetClick(i, planet.slug.current)}
-                      onPointerOver={() => handlePlanetsHover(i)}
-                      onPointerOut={() => handlePlanetsLeave(i)}
-                      makeLargeDots={
-                        finishedPlanetTransition && i === activePlanet
-                      }
-                      hide={finishedPlanetTransition && i !== activePlanet}
-                    />
-                    {/* <VisualConnection
-                      start={[
-                        Math.cos(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
-                        0,
-                        Math.sin(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
-                      ]}
-                      end={
-                        i === planets_data.length - 1
-                          ? [
-                              Math.cos(orbitVal + Math.PI * 0.25 * 0) *
-                                orbitRadius,
-                              0,
-
-                              Math.sin(orbitVal + Math.PI * 0.25 * 0) *
-                                orbitRadius,
-                            ]
-                          : [
-                              Math.cos(orbitVal + Math.PI * 0.25 * (i + 1)) *
-                                orbitRadius,
-                              0,
-
-                              Math.sin(orbitVal + Math.PI * 0.25 * (i + 1)) *
-                                orbitRadius,
-                            ]
-                      }
-                      i={i}
-                    /> */}
-                  </group>
+                  <Planet
+                    ref={(el) => (planetRefs.current[i] = el)}
+                    key={i}
+                    label={planet.name}
+                    position={[
+                      Math.cos(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
+                      0,
+                      Math.sin(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
+                    ]}
+                    radius={planet.radius}
+                    scale={planetScale}
+                    showText={showPlanetsText}
+                    onClick={() => handlePlanetClick(i, planet.slug.current)}
+                    onPointerOver={() => handlePlanetsHover(i)}
+                    onPointerOut={() => handlePlanetsLeave(i)}
+                    makeLargeDots={
+                      finishedPlanetTransition && i === activePlanet
+                    }
+                    hide={finishedPlanetTransition && i !== activePlanet}
+                  />
                 ))}
               </group>
             </group>

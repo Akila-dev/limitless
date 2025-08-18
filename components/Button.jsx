@@ -10,7 +10,7 @@ import { FaChevronLeft } from "react-icons/fa6";
 
 gsap.registerPlugin(useGSAP);
 
-const Button = ({ text, href, onClick, back }) => {
+const Button = ({ text, href, onClick, back, white }) => {
   const container = useRef();
   const { contextSafe } = useGSAP({ scope: container });
 
@@ -29,10 +29,14 @@ const Button = ({ text, href, onClick, back }) => {
   );
 
   const hovering = contextSafe(() => {
-    gsap
-      .timeline()
-
-      .to(".clip-bg", {
+    if (back) {
+      gsap.to(".gsap-button", {
+        scale: 1.1,
+        duration: 1,
+        ease: "power2.out",
+      });
+    } else {
+      gsap.to(".clip-bg", {
         top: "50%",
         opacity: 1,
         scale: 1,
@@ -40,15 +44,24 @@ const Button = ({ text, href, onClick, back }) => {
         // stagger: 0.175,
         ease: "power2.out",
       });
+    }
   });
   const hoverOut = contextSafe(() => {
-    gsap.to(".clip-bg", {
-      top: "200px",
-      scale: 0,
-      duration: 1,
-      // stagger: 0.175,
-      ease: "power2.out",
-    });
+    if (back) {
+      gsap.to(".gsap-button", {
+        scale: 1,
+        duration: 1,
+        ease: "power2.out",
+      });
+    } else {
+      gsap.to(".clip-bg", {
+        top: "200px",
+        scale: 0,
+        duration: 1,
+        // stagger: 0.175,
+        ease: "power2.out",
+      });
+    }
   });
 
   return href ? (
@@ -56,12 +69,22 @@ const Button = ({ text, href, onClick, back }) => {
       onMouseEnter={() => hovering()}
       onMouseLeave={() => hoverOut()}
       href={href}
-      className="btn relative group !overflow-hidden"
+      className={
+        back
+          ? "inner-block"
+          : `btn relative group !overflow-hidden ${white ? "!bg-fg !border-fg" : ""}`
+      }
       ref={container}
     >
-      <span className="clip-bg"></span>
-      <span className="relative z-1 group-hover:text-bg duration-700 flex-center">
-        {back && <FaChevronLeft />}
+      {!back && <span className={`clip-bg ${white ? "!bg-bg" : ""}`}></span>}
+      <span
+        className={
+          back
+            ? "flex-v-center uppercase gsap-button"
+            : `relative z-1 group-hover:text-bg duration-700 flex-center ${white ? "!text-bg group-hover:!text-fg" : ""}`
+        }
+      >
+        {back && <FaChevronLeft className="h3" />}
         {text}
       </span>
     </Link>
@@ -71,12 +94,22 @@ const Button = ({ text, href, onClick, back }) => {
       onMouseEnter={() => hovering()}
       onMouseLeave={() => hoverOut()}
       onClick={onClick}
-      className="btn relative group overflow-hidden"
+      className={
+        back
+          ? "inner-block"
+          : `btn relative group !overflow-hidden ${white ? "!bg-fg !border-fg" : ""}`
+      }
       ref={container}
     >
-      <span className="clip-bg"></span>
-      <span className="relative z-1 group-hover:text-bg duration-700 flex-center">
-        {back && <FaChevronLeft />}
+      {!back && <span className={`clip-bg ${white ? "!bg-bg" : ""}`}></span>}
+      <span
+        className={
+          back
+            ? "flex-v-center uppercase gsap-button"
+            : `relative z-1 group-hover:text-bg duration-700 flex-center ${white ? "!text-bg group-hover:!text-fg" : ""}`
+        }
+      >
+        {back && <FaChevronLeft className="h3" />}
         {text}
       </span>
     </button>

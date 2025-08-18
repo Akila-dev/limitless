@@ -79,7 +79,7 @@ const Text4R3F = ({
         stagger: 0.1,
       },
     });
-    tlRef.current.set(containerRef.current, { opacity: 1 });
+    tlRef.current.set(containerRef.current, { y: 0, opacity: 1 });
     // * TITLE ANIMATION
     if (titleRef.current && splitHRef.current) {
       tlRef.current.from(splitHRef.current.words, {
@@ -168,7 +168,7 @@ const Text4R3F = ({
   return (
     <div
       ref={containerRef}
-      className={`space-y-0.5 lg:space-y-0.25 opacity-0 ${center ? "text-center" : ""} ${center ? "!text-center" : ""}`}
+      className={`flex flex-col gap-0.5 lg:gap-1 opacity-0 ${center ? "text-center" : ""} ${center ? "!text-center" : ""}`}
     >
       {title && (
         <h1 ref={titleRef} className={titleClassName ? titleClassName : ""}>
@@ -201,7 +201,11 @@ const Text4R3F = ({
           ))}
         </div>
       )}
-      {children && <CardsAnimationWrapper>{children}</CardsAnimationWrapper>}
+      {children && (
+        <CardsAnimationWrapper onlyOnce={onlyOnce}>
+          {children}
+        </CardsAnimationWrapper>
+      )}
     </div>
   );
 };

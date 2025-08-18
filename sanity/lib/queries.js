@@ -46,7 +46,21 @@ export const GET_RECENT_EVENTS_LIST =
   location,
   tag -> {name}
 }`);
-
+export const GET_EVENTS_LIST =
+  defineQuery(`*[_type=="event" && defined(slug.current)][0...8] | order(date desc) | order(_createdAt asc){
+  name,
+  date,
+  image {
+    asset-> {
+      __id,
+      url
+    },
+    alt
+  },
+  slug,
+  location,
+  tag -> {name}
+}`);
 export const GET_EVENT_PAGE_STATIC_PARAMS =
   defineQuery(`*[_type=="event" && defined(slug.current)]{
   slug

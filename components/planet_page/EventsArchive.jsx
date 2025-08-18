@@ -8,11 +8,6 @@ import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
 
-import { FaClock } from "react-icons/fa6";
-import { LiaLongArrowAltRightSolid } from "react-icons/lia";
-import { CgArrowRight } from "react-icons/cg";
-import { FaChevronRight } from "react-icons/fa6";
-
 import {
   Text4R3F,
   CardsAnimationWrapper,
@@ -20,46 +15,40 @@ import {
   Button,
   SubscribeForm,
 } from "@/components";
-// import BlogImageGenerator from "@/components/blog/BlogImageGenerator";
 
-import blog_sphere from "@/assets/images/blog_sphere.png";
-
-const BlogCard = ({ title, date, image, slug, excerpt, author }) => {
+const EventsCard = ({ name, date, image, slug, tag, location, alt }) => {
   return (
-    <div className="space-y-1">
-      <div>
+    <Link
+      href={`/events/${slug}`}
+      className="w-full h-10 lg:h-12 border-[0.1em] border-fg rounded-[0.5em] overflow-clip block !p-0"
+    >
+      <div className="relative h-full">
         <Image
-          src={blog_sphere}
-          alt={title}
-          width={400}
-          height={400}
-          className="object-contain h-auto w-full"
+          src={image}
+          width={350}
+          height={200}
+          alt={alt}
+          className="w-full h-full object-cover"
         />
-      </div>
-      <div className="">
-        <Link
-          href={`/blog/${slug}` || "/blog"}
-          className="h4 !font-base !font-medium uppercase !leading-[1]"
-        >
-          {title}
-        </Link>
-        <div className="flex-v-center">
-          <p className="xs text-white w-full text-left text-wrap overflow-hidden text-ellipsis max-h-3 my-1">
-            {excerpt}
+        <div className="absolute top-0 left-0 w-full h-full px-1 py-0.75 flex flex-col justify-end gap-0.5 bg-gradient-to-b from-transparent via-transparent to-black">
+          <div className="flex-v-center flex-wrap !gap-x-1 !gap-y-0.25">
+            <p className="p-xs uppercase !font-medium">
+              {location} - {moment(date).format("l")}
+            </p>
+            <p className="border-[0.1em] rounded-[0.3em] p-xs uppercase italic px-0.75">
+              {tag}
+            </p>
+          </div>
+          <p className="text-white w-full text-left uppercase !font-medium text-wrap overflow-hidden text-ellipsis max-h-3 max-w-16">
+            {name}
           </p>
-          <Link
-            href={`/blog/${slug}` || "/blog"}
-            className="min-w-2 flex-center hover:scale-110 transform duration-700"
-          >
-            <FaChevronRight className="size-1.5" />
-          </Link>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
-const BlogArchive = ({ data }) => {
+const EventsArchive = ({ data }) => {
   const [fetchMoreCount, setFetchMoreCount] = useState(1);
   const router = useRouter();
 
@@ -81,11 +70,11 @@ const BlogArchive = ({ data }) => {
               <Button text="Back to Galaxy" href="/" back />
             </CardsAnimationWrapper>
             <Text4R3F
-              title={"THE FUTURE IS LIMITLESS"}
+              title={"ROADSHOW: LIMITLESS EVENTS"}
               paragraph={
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
               }
-              titleClassName="h2 !font-base pb-0.5"
+              titleClassName="h2 !font-base pb-0.25"
               onlyOnce
               animateImmediately
             />
@@ -100,15 +89,19 @@ const BlogArchive = ({ data }) => {
         {data && data.length > 0 ? (
           <div className="space-y-4">
             <CardsAnimationWrapper
-              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 xl:gap-4"
+              className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-1 xl:gap-2"
               onlyOnce
             >
               {data?.map((item, index) => (
-                <BlogCard
+                <EventsCard
                   key={index}
-                  title={item?.title}
+                  name={item?.name}
+                  date={item?.date}
+                  image={item?.image?.asset?.url}
+                  alt={item?.image?.alt}
                   slug={item?.slug?.current}
-                  excerpt={item?.excerpt}
+                  location={item?.location}
+                  tag={item?.tag?.name}
                 />
               ))}
             </CardsAnimationWrapper>
@@ -121,11 +114,11 @@ const BlogArchive = ({ data }) => {
             </CardsAnimationWrapper>
           </div>
         ) : (
-          <EmptyData text="No posts yet" />
+          <EmptyData text="No events found" />
         )}
       </div>
     </div>
   );
 };
 
-export default BlogArchive;
+export default EventsArchive;

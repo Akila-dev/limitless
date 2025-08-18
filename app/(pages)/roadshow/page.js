@@ -1,12 +1,12 @@
-import { BlogArchive } from "@/components";
+import { EventsArchive } from "@/components";
 
 // ! SANITY
 import { client } from "@/sanity/lib/client";
-import { GET_BLOG_LIST } from "@/sanity/lib/queries";
+import { GET_EVENTS_LIST } from "@/sanity/lib/queries";
 const options = { next: { revalidate: 30 } };
 
 export default async function Limitless() {
-  const data = await client.fetch(GET_BLOG_LIST, options);
+  const data = await client.fetch(GET_EVENTS_LIST, options);
 
   const loadMore = () => {
     console.log("load more");
@@ -17,7 +17,7 @@ export default async function Limitless() {
 
   return (
     <div className="">
-      <BlogArchive data={data} />
+      <EventsArchive data={data} />
     </div>
   );
 }

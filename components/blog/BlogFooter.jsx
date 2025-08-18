@@ -22,7 +22,7 @@ const FooterSection = () => {
 
   return (
     <div className="bg-light container-x py-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3 lg:gap-1">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3 lg:gap-1 lg:items-start">
         <CardsAnimationWrapper className="lg:col-span-2" onlyOnce>
           <Logo />
         </CardsAnimationWrapper>
@@ -34,7 +34,7 @@ const FooterSection = () => {
             <Link
               key={index}
               href={link.href}
-              className="uppercase !p-0 !m-0 !leading-[1]"
+              className="xs uppercase !p-0 !m-0"
             >
               {link.text}
             </Link>
@@ -44,7 +44,7 @@ const FooterSection = () => {
           className="lg:col-span-3 flex-center flex-col !gap-2 !items-start lg:!items-center"
           onlyOnce
         >
-          <p className="lg:text-center">
+          <p className="lg:text-center xs">
             LOREM IPSUM DOLOR SIT AMET, CONSECTETUR.
           </p>
           <Button text="Call To Action" href="/" />

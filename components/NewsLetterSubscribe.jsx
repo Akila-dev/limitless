@@ -2,7 +2,7 @@ import { Text4R3F, SubscribeForm } from "@/components";
 
 const NewsLetterSubscribe = () => {
   return (
-    <div>
+    <div className="flex flex-col justify-start">
       <Text4R3F
         title="Newsletter Subscribe"
         titleClassName="h3 uppercase !font-base !leading-[1]"
