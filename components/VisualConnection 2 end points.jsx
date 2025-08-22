@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useEffect, useState } from "react";
+import { useMemo, useRef } from "react";
 import { Line, Trail } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -8,48 +8,6 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(useGSAP);
-
-// export function PulseLine({ start, end }) {
-//   const lineRef = useRef();
-
-//   useEffect(() => {
-//     if (!lineRef.current) return;
-//     const geom = lineRef.current.geometry;
-//     const total = geom.attributes.position.count;
-
-//     // pulse length in # of points (short segment)
-//     const pulseLength = Math.floor(total * 0.1); // 10% of line
-
-//     const animatePulse = (forward = true) => {
-//       const obj = { i: forward ? 0 : total - pulseLength };
-
-//       gsap.to(obj, {
-//         i: forward ? total - pulseLength : 0,
-//         duration: 2,
-//         ease: "none",
-//         onUpdate: () => {
-//           // Show only a small traveling slice
-//           geom.setDrawRange(Math.floor(obj.i), pulseLength);
-//         },
-//         onComplete: () => {
-//           animatePulse(!forward); // bounce back
-//         },
-//       });
-//     };
-
-//     animatePulse(true);
-//   }, []);
-
-//   return (
-//     <Line
-//       ref={lineRef}
-//       points={[new THREE.Vector3(...start), new THREE.Vector3(...end)]}
-//       color="cyan"
-//       lineWidth={3}
-//       transparent
-//     />
-//   );
-// }
 
 const PulseConnection = ({ start, end, end2, i }) => {
   const containerRef = useRef();
@@ -61,11 +19,11 @@ const PulseConnection = ({ start, end, end2, i }) => {
       const ctx = gsap.context(() => {
         tlRef.current = gsap.timeline({
           repeat: -1,
-          repeatDelay: i * Math.random() * 3,
-          duration: 3,
+          repeatDelay: i * Math.random() * 2,
+          duration: 2,
           yoyo: true,
-          ease: "expo.inOut",
-          delay: i * Math.random() * 3,
+          ease: "power2.inOut",
+          delay: i * Math.random() * 2,
         });
 
         tlRef.current
@@ -88,30 +46,17 @@ const PulseConnection = ({ start, end, end2, i }) => {
 
   return (
     <group ref={containerRef}>
-      <Trail width={0.5} color={"grey"} length={1} decay={0.1}>
+      <Trail width={0.5} color={"grey"} length={10} decay={0.1}>
         <mesh ref={pulseRef} scale={0.005} position={start}>
           <sphereGeometry />
-          <meshStandardMaterial
-            emissive="white"
-            emissiveIntensity={4}
-            color={"grey"}
-            transparent
-            opacity={0.7}
-          />
+          <meshBasicMaterial color={"grey"} />
         </mesh>
       </Trail>
     </group>
   );
 };
 
-const VisualConnection = ({
-  i,
-  orbitRadius,
-  orbitVal,
-  lastPlanet = 7,
-  show,
-}) => {
-  const [showConnections, setShowConnections] = useState(false);
+const VisualConnection = ({ i, orbitRadius, orbitVal, lastPlanet }) => {
   const start = [
     Math.cos(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
     0,
@@ -148,18 +93,6 @@ const VisualConnection = ({
             orbitRadius,
         ];
 
-  useEffect(() => {
-    if (show) {
-      setShowConnections(true);
-    } else {
-      setShowConnections(false);
-    }
-  }, [show]);
-
-  return (
-    showConnections && (
-      <PulseConnection start={start} end={end} end2={end2} i={i} />
-    )
-  );
+  return <PulseConnection start={start} end={end} end2={end2} i={i} />;
 };
 export default VisualConnection;

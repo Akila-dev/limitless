@@ -18,7 +18,7 @@ import {
 
 // ! ZUSTAND
 import { useIntroStore } from "@/utils/store.js";
-import { Scroll } from "@react-three/drei";
+import { Scroll, Trail } from "@react-three/drei";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -290,7 +290,7 @@ const GalaxyScene = ({ data, windowSize }) => {
       planets_slugs.includes(previousPathname.current) &&
       pathname === "/"
     ) {
-      console.log("home to planet page");
+      console.log("planet to home page");
       planetToHome();
     }
     // * 5. TO LIMITLESS PAGE
@@ -526,7 +526,7 @@ const GalaxyScene = ({ data, windowSize }) => {
       tl.current = gsap.timeline({
         defaults: { duration: 1.2, ease: "expo.inOut" },
         onStart: () => {
-          setPauseAutoRotation(true);
+          // setPauseAutoRotation(true);
           setPlanetIsTransitioning(true);
           setFinishedPlanetTransition(false);
 
@@ -828,33 +828,13 @@ const GalaxyScene = ({ data, windowSize }) => {
                       }
                       hide={finishedPlanetTransition && i !== activePlanet}
                     />
-                    {/* <VisualConnection
-                      start={[
-                        Math.cos(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
-                        0,
-                        Math.sin(orbitVal + Math.PI * 0.25 * i) * orbitRadius,
-                      ]}
-                      end={
-                        i === planets_data.length - 1
-                          ? [
-                              Math.cos(orbitVal + Math.PI * 0.25 * 0) *
-                                orbitRadius,
-                              0,
-
-                              Math.sin(orbitVal + Math.PI * 0.25 * 0) *
-                                orbitRadius,
-                            ]
-                          : [
-                              Math.cos(orbitVal + Math.PI * 0.25 * (i + 1)) *
-                                orbitRadius,
-                              0,
-
-                              Math.sin(orbitVal + Math.PI * 0.25 * (i + 1)) *
-                                orbitRadius,
-                            ]
-                      }
+                    <VisualConnection
                       i={i}
-                    /> */}
+                      lastPlanet={planets_data.length - 1}
+                      orbitRadius={orbitRadius}
+                      orbitVal={orbitVal}
+                      show={showPlanetsText}
+                    />
                   </group>
                 ))}
               </group>
