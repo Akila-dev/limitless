@@ -11,16 +11,10 @@ import { useGSAP } from "@gsap/react";
 gsap.registerPlugin(useGSAP);
 
 const PulseConnection = ({ start, end, end2, i }) => {
-  const [showTrail, setShowTrail] = useState(false);
+  const [trailLength, setTrailLength] = useState(1);
   const containerRef = useRef();
   const pulseRef = useRef();
   const tlRef = useRef();
-
-  useEffect(() => {
-    setTimeout(() => {
-      setShowTrail(true);
-    }, 1000);
-  }, []);
 
   useGSAP(
     () => {
@@ -54,9 +48,9 @@ const PulseConnection = ({ start, end, end2, i }) => {
 
   return (
     <group ref={containerRef}>
-      <Trail width={showTrail ? 0.5 : 0} color={"grey"} length={1} decay={0.1}>
+      <Trail width={0.5} color={"grey"} length={trailLength} decay={0.1}>
         <mesh ref={pulseRef} scale={1} position={start}>
-          <sphereGeometry args={[0.005, 32, 32]} />
+          <sphereGeometry args={[0.01, 32, 32]} />
           <meshStandardMaterial
             emissive="white"
             emissiveIntensity={4}
@@ -122,6 +116,10 @@ const VisualConnection = ({
     }
   }, [show]);
 
-  return <PulseConnection start={start} end={end} end2={end2} i={i} />;
+  return (
+    showConnections && (
+      <PulseConnection start={start} end={end} end2={end2} i={i} />
+    )
+  );
 };
 export default VisualConnection;

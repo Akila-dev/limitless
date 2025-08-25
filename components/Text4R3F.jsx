@@ -168,7 +168,7 @@ const Text4R3F = ({
   return (
     <div
       ref={containerRef}
-      className={`flex flex-col gap-0.5 lg:gap-1 opacity-0 ${center ? "text-center" : ""} ${center ? "!text-center" : ""}`}
+      className={`flex flex-col gap-1 opacity-0 ${center ? "text-center" : ""} ${center ? "!text-center" : ""}`}
     >
       {title && (
         <h1 ref={titleRef} className={titleClassName ? titleClassName : ""}>

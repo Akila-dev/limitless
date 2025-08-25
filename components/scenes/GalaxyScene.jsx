@@ -252,6 +252,7 @@ const GalaxyScene = ({ data, windowSize }) => {
   // ! PLANET CLICK EVENT
   // ! PLANET CLICK EVENT
   const handlePlanetClick = (i, slug) => {
+    setIntroStarted();
     setActivePlanet(i);
     router.push(`/${slug}`);
   };
@@ -828,13 +829,15 @@ const GalaxyScene = ({ data, windowSize }) => {
                       }
                       hide={finishedPlanetTransition && i !== activePlanet}
                     />
-                    <VisualConnection
-                      i={i}
-                      lastPlanet={planets_data.length - 1}
-                      orbitRadius={orbitRadius}
-                      orbitVal={orbitVal}
-                      show={showPlanetsText}
-                    />
+                    {showPlanetsText && (
+                      <VisualConnection
+                        i={i}
+                        lastPlanet={planets_data.length - 1}
+                        orbitRadius={orbitRadius}
+                        orbitVal={orbitVal}
+                        show={showPlanetsText}
+                      />
+                    )}
                   </group>
                 ))}
               </group>
