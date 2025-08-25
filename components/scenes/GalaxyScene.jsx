@@ -450,9 +450,10 @@ const GalaxyScene = ({ data, windowSize }) => {
         },
         onComplete: () => {
           setFinishedPlanetTransition(true); // Make active planet's dot larger and fadeout other planets
-          setShowLimitlessText(false);
-          setShowPlanetsText(false);
           transitionComplete();
+
+          // setShowLimitlessText(false);
+          // setShowPlanetsText(false);
         },
       });
 
@@ -464,6 +465,12 @@ const GalaxyScene = ({ data, windowSize }) => {
           x: homeLimitlessEndX,
           y: 0,
           z: 0,
+          duration: 4,
+        })
+        .set(sunRef.current.scale, {
+          x: homeLimitlessScale * 0.95,
+          y: homeLimitlessScale * 0.95,
+          z: homeLimitlessScale * 0.95,
           duration: 4,
         })
         .set(starsRef.current.scale, {
