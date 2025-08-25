@@ -5,3 +5,9 @@ export const useIntroStore = create((set) => ({
   setIntroFinished: () => set({ introFinished: true }),
   setIntroStarted: () => set({ introFinished: false }),
 }));
+
+export const useLoadingStore = create((set) => ({
+  loadingInProgress: false,
+  setLoadingFinished: () => set({ loadingInProgress: false }),
+  setLoadingStarted: () => set({ loadingInProgress: true }),
+}));

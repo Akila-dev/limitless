@@ -17,8 +17,7 @@ import {
 } from "@/components";
 
 // ! ZUSTAND
-import { useIntroStore } from "@/utils/store.js";
-import { Scroll, Trail } from "@react-three/drei";
+import { useIntroStore, useLoadingStore } from "@/utils/store.js";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -52,7 +51,10 @@ const GalaxyScene = ({ data, windowSize }) => {
 
   const { contextSafe } = useGSAP({ scope: container });
 
-  const introFinished = useIntroStore((state) => state.introFinished);
+  const setLoadingFinished = useLoadingStore(
+    (state) => state.setLoadingFinished
+  );
+  const setLoadingStarted = useLoadingStore((state) => state.setLoadingStarted);
   const setIntroFinished = useIntroStore((state) => state.setIntroFinished);
   const setIntroStarted = useIntroStore((state) => state.setIntroStarted);
 
@@ -253,6 +255,7 @@ const GalaxyScene = ({ data, windowSize }) => {
   // ! PLANET CLICK EVENT
   const handlePlanetClick = (i, slug) => {
     setIntroStarted();
+    setLoadingStarted();
     setActivePlanet(i);
     router.push(`/${slug}`);
   };
@@ -308,6 +311,7 @@ const GalaxyScene = ({ data, windowSize }) => {
 
   useEffect(() => {
     setIntroStarted();
+    setLoadingFinished();
 
     pageTransitions();
   }, [pathname]);
@@ -829,7 +833,7 @@ const GalaxyScene = ({ data, windowSize }) => {
                       }
                       hide={finishedPlanetTransition && i !== activePlanet}
                     />
-                    {showPlanetsText && (
+                    {showPlanetsText && !finishedPlanetTransition && (
                       <VisualConnection
                         i={i}
                         lastPlanet={planets_data.length - 1}
