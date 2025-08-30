@@ -109,25 +109,25 @@ const Text4R3F = ({
         titleRef.current ? ">-=1" : ">"
       );
     }
-    // * BUTTONS ANIMATION
-    if (buttonRefs.current) {
-      tlRef.current.from(
-        buttonRefs.current,
-        {
-          duration: 1,
-          delay:
-            !titleRef.current &&
-            !subtitleRef.current &&
-            !paragraphRef.current &&
-            delay
-              ? delay
-              : 0,
-        },
-        titleRef.current || subtitleRef.current || paragraphRef.current
-          ? ">-=1"
-          : ">"
-      );
-    }
+    // // * BUTTONS ANIMATION
+    // if (buttonRefs.current) {
+    //   tlRef.current.from(
+    //     buttonRefs.current,
+    //     {
+    //       duration: 1,
+    //       delay:
+    //         !titleRef.current &&
+    //         !subtitleRef.current &&
+    //         !paragraphRef.current &&
+    //         delay
+    //           ? delay
+    //           : 0,
+    //     },
+    //     titleRef.current || subtitleRef.current || paragraphRef.current
+    //       ? ">-=1"
+    //       : ">"
+    //   );
+    // }
 
     ScrollTrigger.refresh();
   };
@@ -186,20 +186,17 @@ const Text4R3F = ({
         </p>
       )}
       {buttons && (
-        <div
-          className={`flex items-center flex-wrap pt-2.25 ${center ? "justify-center" : "justify-start"}`}
+        <CardsAnimationWrapper
+          delay={0.5}
+          onlyOnce={onlyOnce}
+          className="flex justify-start"
         >
           {buttons.map((button, i) => (
-            // <Button key={i} text={button.text} href={button.url} />
-            <div
-              key={i}
-              ref={(el) => (buttonRefs.current[i] = el)}
-              className="flex"
-            >
+            <div key={i}>
               <Button text={button.text} href={button.url} />
             </div>
           ))}
-        </div>
+        </CardsAnimationWrapper>
       )}
       {children && (
         <CardsAnimationWrapper onlyOnce={onlyOnce}>

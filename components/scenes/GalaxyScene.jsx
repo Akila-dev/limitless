@@ -301,6 +301,7 @@ const GalaxyScene = ({ data, windowSize }) => {
     planets_slugs.forEach((slug) => {
       router.prefetch(slug);
     });
+    router.prefetch("/limitless");
   }, [router]);
 
   useEffect(() => {
@@ -430,14 +431,17 @@ const GalaxyScene = ({ data, windowSize }) => {
       .to(
         planetRefs.current.map((mesh) => mesh.scale),
         {
-          x: 1.2,
-          y: 1.2,
-          z: 1.2,
+          x: 1.15,
+          y: 1.15,
+          z: 1.15,
           duration: 2,
           repeatDelay: 1,
           repeat: -1,
           yoyo: true,
-          stagger: 0.5,
+          stagger: {
+            amount: 1,
+            ease: "sine.inOut",
+          },
           ease: "sine.inOut",
         }
       );
@@ -587,14 +591,19 @@ const GalaxyScene = ({ data, windowSize }) => {
       .to(
         planetRefs.current.map((mesh) => mesh.scale),
         {
-          x: 1.2,
-          y: 1.2,
-          z: 1.2,
+          x: 1.15,
+          y: 1.15,
+          z: 1.15,
           duration: 2,
           repeatDelay: 1,
           repeat: -1,
           yoyo: true,
-          stagger: 0.5,
+          stagger: {
+            // each: 0.5,
+            // from: "center",
+            amount: 1,
+            ease: "sine.inOut",
+          },
           ease: "sine.inOut",
         }
       );
@@ -717,14 +726,17 @@ const GalaxyScene = ({ data, windowSize }) => {
       .to(
         planetRefs.current.map((mesh) => mesh.scale),
         {
-          x: 1.2,
-          y: 1.2,
-          z: 1.2,
+          x: 1.15,
+          y: 1.15,
+          z: 1.15,
           duration: 2,
           repeatDelay: 1,
           repeat: -1,
           yoyo: true,
-          stagger: 0.5,
+          stagger: {
+            amount: 1,
+            ease: "sine.inOut",
+          },
           ease: "sine.inOut",
         }
       );
