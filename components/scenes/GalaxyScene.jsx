@@ -675,11 +675,6 @@ const GalaxyScene = ({ data, windowSize }) => {
         setIntroStarted();
         setFinishedPlanetTransition(false);
       },
-      onComplete: () => {
-        setPauseAutoRotation(false);
-        setPlanetIsTransitioning(false);
-        transitionComplete();
-      },
     });
 
     // Shrink the active planet back to original size
@@ -720,6 +715,11 @@ const GalaxyScene = ({ data, windowSize }) => {
           y: 1,
           z: 1,
           duration: 1,
+          onComplete: () => {
+            setPauseAutoRotation(false);
+            setPlanetIsTransitioning(false);
+            transitionComplete();
+          },
         },
         "<+=0.5"
       )

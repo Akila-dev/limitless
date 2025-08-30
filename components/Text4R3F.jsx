@@ -186,13 +186,9 @@ const Text4R3F = ({
         </p>
       )}
       {buttons && (
-        <CardsAnimationWrapper
-          delay={0.5}
-          onlyOnce={onlyOnce}
-          className="flex justify-start"
-        >
+        <CardsAnimationWrapper delay={0.5} onlyOnce={onlyOnce} classNAme="mt-1">
           {buttons.map((button, i) => (
-            <div key={i}>
+            <div key={i} className="flex-v-center">
               <Button text={button.text} href={button.url} />
             </div>
           ))}
