@@ -233,7 +233,8 @@ const GalaxyScene = ({ data, windowSize }) => {
   // ! MOON CLICK EVENT
   // ! MOON CLICK EVENT
   const handleMoonClick = () => {
-    // setRouteFrom(router.pathname);
+    setIntroStarted();
+    setLoadingStarted();
     router.push("/limitless");
   };
 
