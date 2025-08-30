@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useRef, Suspense, useState, useEffect } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -27,13 +27,13 @@ const GalaxyScene = ({ data, windowSize }) => {
   const [animateSunBloom, setAnimateSunBloom] = useState(false);
   const [showLimitlessText, setShowLimitlessText] = useState(false);
   const [showPlanetsText, setShowPlanetsText] = useState(false);
+  const [hoveringMesh, setHoveringMesh] = useState(false);
   const [activePlanet, setActivePlanet] = useState(0);
   const [pauseAutoRotation, setPauseAutoRotation] = useState(false);
   const [planetIsTransitioning, setPlanetIsTransitioning] = useState(false); // * STATE FOR WHETHER THE PAGE IS IN THE PROCESS  BEING TRANSITIONED FROM/TO A PLANET PAGE
   const [finishedPlanetTransition, setFinishedPlanetTransition] =
     useState(false); // * STATE FOR WHETHER TRANSITION FROM HOME TO PLANET PAGE HAS FINISHED
 
-  const hoveringMeshRef = useRef(null);
   const router = useRouter();
   const pathname = usePathname();
   const previousPathname = useRef("");
@@ -47,7 +47,6 @@ const GalaxyScene = ({ data, windowSize }) => {
   const limitlessRef = useRef(null);
   const planetsOrbitRef = useRef(null);
   const planetRefs = useRef([]);
-  const planetHoverRefs = useRef([]);
   const dragWrapperRef = useRef(null);
 
   const { contextSafe } = useGSAP({ scope: container });
@@ -115,14 +114,14 @@ const GalaxyScene = ({ data, windowSize }) => {
   // ! HOVER EVENTS
   // ! HOVER EVENTS
   // * CURSOR-POINTER
-  const setCursor = (hovering) => {
-    hoveringMeshRef.current = hovering;
-    document.body.style.cursor = hovering ? "pointer" : "default";
-  };
+  useEffect(() => {
+    document.body.style.cursor = hoveringMesh ? "pointer" : "default";
+    return () => (document.body.style.cursor = "default");
+  }, [hoveringMesh]);
 
   // * HOVER LIMITLESS
   const handleLimitlessHover = contextSafe(() => {
-    setCursor(true);
+    setHoveringMesh(true);
     gsap
       .timeline({ defaults: { duration: 1, ease: "power2.out" } })
       .to(limitlessRef.current.scale, {
@@ -139,7 +138,7 @@ const GalaxyScene = ({ data, windowSize }) => {
       );
   });
   const handleLimitlessLeave = contextSafe(() => {
-    setCursor(false);
+    setHoveringMesh(false);
     gsap
       .timeline({ defaults: { duration: 1, ease: "power2.out" } })
       .to(limitlessRef.current.scale, {
@@ -158,12 +157,26 @@ const GalaxyScene = ({ data, windowSize }) => {
   // * HOVER PLANETS
   const handlePlanetsHover = contextSafe((i) => {
     if (!planetIsTransitioning) {
-      setCursor(true);
+      setHoveringMesh(true);
+      gsap
+        .timeline({ defaults: { duration: 2, ease: "power2.out" } })
+        .to(planetRefs.current[i].scale, {
+          x: 1.1,
+          y: 1.1,
+          z: 1.1,
+        });
     }
   });
   const handlePlanetsLeave = contextSafe((i) => {
     if (!planetIsTransitioning) {
-      setCursor(false);
+      setHoveringMesh(false);
+      gsap
+        .timeline({ defaults: { duration: 2, ease: "power2.out" } })
+        .to(planetRefs.current[i].scale, {
+          x: 1,
+          y: 1,
+          z: 1,
+        });
     }
   });
 
@@ -258,7 +271,6 @@ const GalaxyScene = ({ data, windowSize }) => {
       !planets_slugs.includes(previousPathname.current)
     ) {
       console.log("to home");
-      // testVisualConnection();
       toHome();
     }
     // * 2. TO PLANET PAGE
@@ -298,20 +310,10 @@ const GalaxyScene = ({ data, windowSize }) => {
   };
 
   useEffect(() => {
-    planets_slugs.forEach((slug) => {
-      router.prefetch(slug);
-    });
-  }, [router]);
-
-  useEffect(() => {
     setIntroStarted();
     setLoadingFinished();
 
     pageTransitions();
-
-    return () => {
-      tl.current?.kill();
-    };
   }, [pathname]);
 
   // ! ON TRANSITION COMPLETE
@@ -364,240 +366,221 @@ const GalaxyScene = ({ data, windowSize }) => {
   const toHome = contextSafe(() => {
     toNoTransition();
 
-    tl.current = gsap.timeline({
-      defaults: { duration: 1.2, ease: "expo.inOut" },
-      onStart: () => {
-        setPauseAutoRotation(false);
-      },
-      onComplete: () => {
-        transitionComplete();
-      },
-    });
+    setTimeout(() => {
+      tl.current = gsap.timeline({
+        defaults: { duration: 1.2, ease: "expo.inOut" },
+        onStart: () => {
+          setPauseAutoRotation(false);
+        },
+        onComplete: () => {
+          transitionComplete();
+        },
+      });
 
-    tl.current
-      .to(sunRef.current.scale, {
-        x: homeLimitlessScale * 0.5,
-        y: homeLimitlessScale * 0.5,
-        z: homeLimitlessScale * 0.5,
-        duration: 2,
-      })
-      .to(sunRef.current.position, {
-        x: homeLimitlessEndX,
-        y: 0,
-        z: 0,
-        duration: 4,
-      })
-      .to(
-        sunRef.current.scale,
-        {
-          x: homeLimitlessScale * 0.95,
-          y: homeLimitlessScale * 0.95,
-          z: homeLimitlessScale * 0.95,
-          duration: 4,
-          onStart: () => setAnimateSunBloom(true),
-        },
-        "<+=0.3"
-      )
-      .to(
-        planetsOrbitRef.current.scale,
-        { x: 1, y: 1, z: 1, duration: 3 },
-        "<+=1.2"
-      )
-      .to(planetsOrbitRef.current.position, { y: 0, duration: 3 }, "<+=0.2")
-      .to(
-        starsRef.current.scale,
-        {
-          x: 1,
-          y: 1,
-          z: 1,
-          duration: 3,
-          onComplete: () => setPauseAutoRotation(false),
-        },
-        "<+=0.2"
-      )
-      .to(
-        planetsOrbitRef.current.rotation,
-        {
-          y: Math.PI * 4,
-          duration: 3,
-          onComplete: () => {
-            setShowLimitlessText(true);
-            setTimeout(() => setShowPlanetsText(true), 500);
-          },
-        },
-        "<+=0.3"
-      )
-      .to(
-        planetRefs.current.map((mesh) => mesh.scale),
-        {
-          x: 1.2,
-          y: 1.2,
-          z: 1.2,
+      tl.current
+        .to(sunRef.current.scale, {
+          x: homeLimitlessScale * 0.5,
+          y: homeLimitlessScale * 0.5,
+          z: homeLimitlessScale * 0.5,
           duration: 2,
-          repeatDelay: 1,
-          repeat: -1,
-          yoyo: true,
-          stagger: 0.5,
-          ease: "sine.inOut",
-        }
-      );
+        })
+        .to(sunRef.current.position, {
+          x: homeLimitlessEndX,
+          y: 0,
+          z: 0,
+          duration: 4,
+        })
+        .to(
+          sunRef.current.scale,
+          {
+            x: homeLimitlessScale * 0.95,
+            y: homeLimitlessScale * 0.95,
+            z: homeLimitlessScale * 0.95,
+            duration: 4,
+            onStart: () => setAnimateSunBloom(true),
+          },
+          "<+=0.3"
+        )
+        .to(
+          planetsOrbitRef.current.scale,
+          { x: 1, y: 1, z: 1, duration: 3 },
+          "<+=1.2"
+        )
+        .to(planetsOrbitRef.current.position, { y: 0, duration: 3 }, "<+=0.2")
+        .to(
+          starsRef.current.scale,
+          {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: 3,
+            onComplete: () => setPauseAutoRotation(false),
+          },
+          "<+=0.2"
+        )
+        .to(
+          planetsOrbitRef.current.rotation,
+          {
+            y: Math.PI * 4,
+            duration: 3,
+            onComplete: () => {
+              setShowLimitlessText(true);
+              setTimeout(() => setShowPlanetsText(true), 500);
+            },
+          },
+          "<+=0.3"
+        );
+    }, 500);
   });
 
   // ! TRANSITION ANIMATION 2: TO PLANET PAGE (FOR MOVING FROM UNKNOWN TO PLANET PAGE)
   const toPlanetPage = contextSafe(() => {
     toNoTransition();
 
-    tl.current = gsap.timeline({
-      defaults: { duration: 1.2, ease: "expo.inOut" },
-      onStart: () => {
-        setPauseAutoRotation(true);
-        setPlanetIsTransitioning(true);
-        setFinishedPlanetTransition(false);
+    setTimeout(() => {
+      tl.current = gsap.timeline({
+        defaults: { duration: 1.2, ease: "expo.inOut" },
+        onStart: () => {
+          setPauseAutoRotation(true);
+          setPlanetIsTransitioning(true);
+          setFinishedPlanetTransition(false);
 
-        setShowLimitlessText(true);
-        setShowPlanetsText(true);
-      },
-      onComplete: () => {
-        setFinishedPlanetTransition(true); // Make active planet's dot larger and fadeout other planets
-        transitionComplete();
-      },
-    });
+          setShowLimitlessText(true);
+          setShowPlanetsText(true);
+        },
+        onComplete: () => {
+          setFinishedPlanetTransition(true); // Make active planet's dot larger and fadeout other planets
+          transitionComplete();
 
-    // Setup initial scene
-    tl.current
-      .set(planetsOrbitRef.current.scale, { x: 1, y: 1, z: 1, duration: 3 })
-      .set(planetsOrbitRef.current.position, { y: 0, duration: 3 })
-      .set(sunRef.current.position, {
-        x: homeLimitlessEndX,
-        y: 0,
-        z: 0,
-        duration: 4,
-      })
-      .set(sunRef.current.scale, {
-        x: homeLimitlessScale * 0.95,
-        y: homeLimitlessScale * 0.95,
-        z: homeLimitlessScale * 0.95,
-        duration: 4,
-      })
-      .set(starsRef.current.scale, {
-        x: 1,
-        y: 1,
-        z: 1,
-        duration: 3,
-      })
-      .to(limitlessRef.current.scale, {
-        x: 0,
-        y: 0,
-        z: 0,
-        duration: 0.5,
-      })
-      .to(
-        starsRef.current.scale,
-        {
+          // setShowLimitlessText(false);
+          // setShowPlanetsText(false);
+        },
+      });
+
+      // Setup initial scene
+      tl.current
+        .set(planetsOrbitRef.current.scale, { x: 1, y: 1, z: 1, duration: 3 })
+        .set(planetsOrbitRef.current.position, { y: 0, duration: 3 })
+        .set(sunRef.current.position, {
+          x: homeLimitlessEndX,
+          y: 0,
+          z: 0,
+          duration: 4,
+        })
+        .set(sunRef.current.scale, {
+          x: homeLimitlessScale * 0.95,
+          y: homeLimitlessScale * 0.95,
+          z: homeLimitlessScale * 0.95,
+          duration: 4,
+        })
+        .set(starsRef.current.scale, {
           x: 1,
           y: 1,
           z: 1,
-          duration: 2,
+          duration: 3,
+        })
+        .to(limitlessRef.current.scale, {
+          x: 0,
+          y: 0,
+          z: 0,
+          duration: 0.5,
+        })
+        .to(
+          starsRef.current.scale,
+          {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: 2,
+          },
+          "<"
+        );
+
+      // Rotate the orbit group to focus on the selected planet
+      tl.current.to(
+        planetsOrbitRef.current.rotation,
+        {
+          x: -Math.PI * 0.12,
+          y: activePlanetRotationY,
+          duration: 2.5,
+        },
+        "<+=0.2"
+      );
+
+      // Move orbit group upward slightly (gives nice depth)
+      tl.current.to(
+        planetsOrbitRef.current.position,
+        {
+          y: w > h ? 0 : -1.3,
+          duration: 2.5,
         },
         "<"
       );
 
-    // Rotate the orbit group to focus on the selected planet
-    tl.current.to(
-      planetsOrbitRef.current.rotation,
-      {
-        x: -Math.PI * 0.12,
-        y: activePlanetRotationY,
-        duration: 2.5,
-      },
-      "<+=0.2"
-    );
-
-    // Move orbit group upward slightly (gives nice depth)
-    tl.current.to(
-      planetsOrbitRef.current.position,
-      {
-        y: w > h ? 0 : -1.3,
-        duration: 2.5,
-      },
-      "<"
-    );
-
-    // Scale up the active planet
-    tl.current.to(
-      planetRefs.current[activePlanet].scale,
-      {
-        x: 6,
-        y: 6,
-        z: 6,
-        duration: 2,
-      },
-      "<+=0.6"
-    );
+      // Scale up the active planet
+      tl.current.to(
+        planetRefs.current[activePlanet].scale,
+        {
+          x: 6,
+          y: 6,
+          z: 6,
+          duration: 2,
+        },
+        "<+=0.6"
+      );
+    }, 500);
   });
 
   const testVisualConnection = contextSafe(() => {
     toNoTransition();
 
-    tl.current = gsap.timeline({
-      defaults: { duration: 1.2, ease: "expo.inOut" },
-      onStart: () => {
-        // setPauseAutoRotation(true);
-        setPlanetIsTransitioning(true);
-        setFinishedPlanetTransition(false);
+    setTimeout(() => {
+      tl.current = gsap.timeline({
+        defaults: { duration: 1.2, ease: "expo.inOut" },
+        onStart: () => {
+          // setPauseAutoRotation(true);
+          setPlanetIsTransitioning(true);
+          setFinishedPlanetTransition(false);
 
-        setShowLimitlessText(true);
-        setShowPlanetsText(true);
-      },
-      onComplete: () => {
-        // setFinishedPlanetTransition(true); // Make active planet's dot larger and fadeout other planets
-        // transitionComplete();
-        // setShowLimitlessText(false);
-        // setShowPlanetsText(false);
-      },
-    });
-
-    // Setup initial scene
-    tl.current
-      .set(planetsOrbitRef.current.scale, { x: 1, y: 1, z: 1, duration: 3 })
-      .set(planetsOrbitRef.current.position, { y: 0, duration: 3 })
-      .set(
-        sunRef.current.scale,
-        {
-          x: homeLimitlessScale * 0.95,
-          y: homeLimitlessScale * 0.95,
-          z: homeLimitlessScale * 0.95,
-          duration: 4,
-          onStart: () => setAnimateSunBloom(true),
+          setShowLimitlessText(true);
+          setShowPlanetsText(true);
         },
-        "<+=0.3"
-      )
-      .set(sunRef.current.position, {
-        x: homeLimitlessEndX,
-        y: 0,
-        z: 0,
-        duration: 4,
-      })
-      .set(starsRef.current.scale, {
-        x: 1,
-        y: 1,
-        z: 1,
-        duration: 3,
-      })
-      .to(
-        planetRefs.current.map((mesh) => mesh.scale),
-        {
-          x: 1.2,
-          y: 1.2,
-          z: 1.2,
-          duration: 2,
-          repeatDelay: 1,
-          repeat: -1,
-          yoyo: true,
-          stagger: 0.5,
-          ease: "sine.inOut",
-        }
-      );
+        onComplete: () => {
+          // setFinishedPlanetTransition(true); // Make active planet's dot larger and fadeout other planets
+          // transitionComplete();
+          // setShowLimitlessText(false);
+          // setShowPlanetsText(false);
+        },
+      });
+
+      // Setup initial scene
+      tl.current
+        .set(planetsOrbitRef.current.scale, { x: 1, y: 1, z: 1, duration: 3 })
+        .set(planetsOrbitRef.current.position, { y: 0, duration: 3 })
+        .set(
+          sunRef.current.scale,
+          {
+            x: homeLimitlessScale * 0.95,
+            y: homeLimitlessScale * 0.95,
+            z: homeLimitlessScale * 0.95,
+            duration: 4,
+            onStart: () => setAnimateSunBloom(true),
+          },
+          "<+=0.3"
+        )
+        .set(sunRef.current.position, {
+          x: homeLimitlessEndX,
+          y: 0,
+          z: 0,
+          duration: 4,
+        })
+        .set(starsRef.current.scale, {
+          x: 1,
+          y: 1,
+          z: 1,
+          duration: 3,
+        });
+    }, 500);
   });
 
   // ! TRANSITION ANIMATION 3: HOME TO PLANET ANIMATION
@@ -703,31 +686,16 @@ const GalaxyScene = ({ data, windowSize }) => {
     );
 
     // Show Limitless group again
-    tl.current
-      .to(
-        limitlessRef.current.scale,
-        {
-          x: 1,
-          y: 1,
-          z: 1,
-          duration: 1,
-        },
-        "<+=0.5"
-      )
-      .to(
-        planetRefs.current.map((mesh) => mesh.scale),
-        {
-          x: 1.2,
-          y: 1.2,
-          z: 1.2,
-          duration: 2,
-          repeatDelay: 1,
-          repeat: -1,
-          yoyo: true,
-          stagger: 0.5,
-          ease: "sine.inOut",
-        }
-      );
+    tl.current.to(
+      limitlessRef.current.scale,
+      {
+        x: 1,
+        y: 1,
+        z: 1,
+        duration: 1,
+      },
+      "<+=0.5"
+    );
   });
 
   // ! TRANSITION ANIMATION 5: TO LIMITLESS PAGE (FOR MOVING TO LIMITLESS PAGE)
@@ -736,82 +704,84 @@ const GalaxyScene = ({ data, windowSize }) => {
 
     const limitlessPageLimitlessScale = isDesktopLayout ? 2.35 : 2.15;
 
-    tl.current = gsap.timeline({
-      defaults: { duration: 2, ease: "expo.inOut" },
-      onStart: () => {
-        setShowLimitlessText(false);
-        setShowPlanetsText(false);
-        setPauseAutoRotation(true);
-      },
-      onComplete: () => {
-        transitionComplete();
-      },
-    });
-
-    tl.current
-      // SET INITIAL VALUES
-      .set(sunRef.current.scale, {
-        x: limitlessPageLimitlessScale,
-        y: limitlessPageLimitlessScale,
-        z: limitlessPageLimitlessScale,
-      })
-      .set(
-        sunRef.current.position,
-        {
-          x: 0,
-          y: 0,
-          z: 0,
+    setTimeout(() => {
+      tl.current = gsap.timeline({
+        defaults: { duration: 2, ease: "expo.inOut" },
+        onStart: () => {
+          setShowLimitlessText(false);
+          setShowPlanetsText(false);
+          setPauseAutoRotation(true);
         },
-        "<"
-      )
-      .set(
-        moonRef.current.scale,
-        {
+        onComplete: () => {
+          transitionComplete();
+        },
+      });
+
+      tl.current
+        // SET INITIAL VALUES
+        .set(sunRef.current.scale, {
           x: limitlessPageLimitlessScale,
           y: limitlessPageLimitlessScale,
           z: limitlessPageLimitlessScale,
-        },
-        "<"
-      )
-      .set(
-        moonRef.current.position,
-        {
+        })
+        .set(
+          sunRef.current.position,
+          {
+            x: 0,
+            y: 0,
+            z: 0,
+          },
+          "<"
+        )
+        .set(
+          moonRef.current.scale,
+          {
+            x: limitlessPageLimitlessScale,
+            y: limitlessPageLimitlessScale,
+            z: limitlessPageLimitlessScale,
+          },
+          "<"
+        )
+        .set(
+          moonRef.current.position,
+          {
+            x: 0,
+            y: 0,
+            z: 0,
+          },
+          "<"
+        )
+        .set(
+          limitlessRef.current.position,
+          {
+            x: 0,
+            y: 4,
+            z: 0,
+          },
+          "<"
+        )
+        .set(limitlessRef.current.scale, {
+          x: 0.75,
+          y: 0.75,
+          z: 0.75,
+        })
+        // * START ANIMATION
+        .to(limitlessRef.current.position, {
           x: 0,
-          y: 0,
+          y: 3,
           z: 0,
-        },
-        "<"
-      )
-      .set(
-        limitlessRef.current.position,
-        {
-          x: 0,
-          y: 4,
-          z: 0,
-        },
-        "<"
-      )
-      .set(limitlessRef.current.scale, {
-        x: 0.75,
-        y: 0.75,
-        z: 0.75,
-      })
-      // * START ANIMATION
-      .to(limitlessRef.current.position, {
-        x: 0,
-        y: 3,
-        z: 0,
-      })
-      .to(
-        limitlessRef.current.scale,
-        {
-          x: 1,
-          y: 1,
-          z: 1,
-        },
-        "<"
-      )
-      .to(starsRef.current.scale, { x: 1, y: 1, z: 1 }, "<+=0.5");
+        })
+        .to(
+          limitlessRef.current.scale,
+          {
+            x: 1,
+            y: 1,
+            z: 1,
+          },
+          "<"
+        )
+        .to(starsRef.current.scale, { x: 1, y: 1, z: 1 }, "<+=0.5");
+    }, 500);
   });
 
   useEffect(() => {
@@ -849,7 +819,7 @@ const GalaxyScene = ({ data, windowSize }) => {
             <group ref={dragWrapperRef}>
               <group ref={planetsOrbitRef} position-y={-1} scale={3}>
                 {planets_data.map((planet, i) => (
-                  <mesh ref={(el) => (planetHoverRefs.current[i] = el)} key={i}>
+                  <group key={i}>
                     <Planet
                       ref={(el) => (planetRefs.current[i] = el)}
                       // key={i}
@@ -881,7 +851,7 @@ const GalaxyScene = ({ data, windowSize }) => {
                         show={showPlanetsText}
                       />
                     )}
-                  </mesh>
+                  </group>
                 ))}
               </group>
             </group>
