@@ -33,7 +33,6 @@ const GalaxyScene = ({ data, windowSize }) => {
   const [finishedPlanetTransition, setFinishedPlanetTransition] =
     useState(false); // * STATE FOR WHETHER TRANSITION FROM HOME TO PLANET PAGE HAS FINISHED
 
-  const hoveringMeshRef = useRef(null);
   const router = useRouter();
   const pathname = usePathname();
   const previousPathname = useRef("");
@@ -49,6 +48,10 @@ const GalaxyScene = ({ data, windowSize }) => {
   const planetRefs = useRef([]);
   const planetHoverRefs = useRef([]);
   const dragWrapperRef = useRef(null);
+
+  // * STATE REFS
+  const hoveringMeshRef = useRef(null);
+  const animatePlanetDynamicScale = useRef(null);
 
   const { contextSafe } = useGSAP({ scope: container });
 
@@ -92,6 +95,7 @@ const GalaxyScene = ({ data, windowSize }) => {
 
   // * INTRO ANIMATION VARIABLES
   const tl = useRef(null);
+  const scale_tl = useRef(null);
   const galaxyScale = isDesktopLayout ? 2.5 : 2;
   // * Home
   const homeLimitlessScale = isDesktopLayout ? 0.7 : 0.75;
@@ -248,6 +252,14 @@ const GalaxyScene = ({ data, windowSize }) => {
     router.push(`/${slug}`);
   };
 
+  // ! PREFETCH ROUTES DATA
+  useEffect(() => {
+    planets_slugs.forEach((slug) => {
+      router.prefetch(slug);
+    });
+    router.prefetch("/limitless");
+  }, [router]);
+
   // ! TRANSITION ANIMATIONS
   // ! TRANSITION ANIMATIONS
   // ! TRANSITION ANIMATIONS
@@ -299,15 +311,9 @@ const GalaxyScene = ({ data, windowSize }) => {
   };
 
   useEffect(() => {
-    planets_slugs.forEach((slug) => {
-      router.prefetch(slug);
-    });
-    router.prefetch("/limitless");
-  }, [router]);
-
-  useEffect(() => {
     setIntroStarted();
     setLoadingFinished();
+    setCursor(false);
 
     pageTransitions();
 
@@ -329,11 +335,14 @@ const GalaxyScene = ({ data, windowSize }) => {
         setPauseAutoRotation(animate ? true : false);
         setShowLimitlessText(false);
         setShowPlanetsText(false);
+        setFinishedPlanetTransition(false);
+        handlePlanetDynamicScale(false);
       },
       onComplete: () => animate && transitionComplete(),
     });
 
     tl.current
+      .set(scrollRef.current.position, { x: 0, y: 0, z: 0 })
       .set(starsRef.current.scale, { x: 5, y: 5, z: 5 })
       .set(limitlessRef.current.scale, { x: 1, y: 1, z: 1 })
       .set(limitlessRef.current.position, { x: 0, y: limitlessY, z: 0 })
@@ -351,7 +360,11 @@ const GalaxyScene = ({ data, windowSize }) => {
       })
       .set(planetsOrbitRef.current.scale, { x: 3, y: 3, z: 3 })
       .set(planetsOrbitRef.current.position, { x: 0, y: -1, z: 0 })
-      .set(planetsOrbitRef.current.rotation, { x: 0, y: 0, z: 0 });
+      .set(planetsOrbitRef.current.rotation, { x: 0, y: 0, z: 0 })
+      .set(
+        planetRefs.current.map((mesh) => mesh.scale),
+        { x: 1, y: 1, z: 1 }
+      );
 
     if (animate) {
       tl.current.to(starsRef.current.scale, {
@@ -359,6 +372,51 @@ const GalaxyScene = ({ data, windowSize }) => {
         y: 1,
         z: 1,
       });
+    }
+  };
+
+  // ! PLANET DYNAMIC SCALE
+  // ! PLANET DYNAMIC SCALE
+  // ! PLANET DYNAMIC SCALE
+  // * ANIMATION
+  useEffect(() => {
+    const scaleDuration = 5;
+    const planetScaleFactor = scaleDuration * 0.35;
+    scale_tl.current = gsap.timeline({
+      paused: true,
+      repeat: -1,
+      defaults: {
+        duration: scaleDuration,
+        ease: "sine.inOut",
+      },
+    });
+    planetRefs.current.forEach((planet, i) => {
+      scale_tl.current
+        .to(
+          planet.scale,
+          {
+            x: 1.5,
+            y: 1.5,
+            z: 1.5,
+          },
+          i > 0 ? "<+=" + planetScaleFactor : 0
+        )
+        .to(planet.scale, {
+          x: 1,
+          y: 1,
+          z: 1,
+        });
+    });
+  }, []);
+
+  // * LOGIC
+  const handlePlanetDynamicScale = (animate) => {
+    animatePlanetDynamicScale.current = animate;
+
+    if (animate && !finishedPlanetTransition) {
+      scale_tl.current.restart();
+    } else {
+      scale_tl.current.pause(0);
     }
   };
 
@@ -370,9 +428,11 @@ const GalaxyScene = ({ data, windowSize }) => {
       defaults: { duration: 1.2, ease: "expo.inOut" },
       onStart: () => {
         setPauseAutoRotation(false);
+        handlePlanetDynamicScale(false);
       },
       onComplete: () => {
         transitionComplete();
+        handlePlanetDynamicScale(true);
       },
     });
 
@@ -420,7 +480,7 @@ const GalaxyScene = ({ data, windowSize }) => {
       .to(
         planetsOrbitRef.current.rotation,
         {
-          y: Math.PI * 4,
+          y: Math.PI * 4.35,
           duration: 3,
           onComplete: () => {
             setShowLimitlessText(true);
@@ -428,23 +488,6 @@ const GalaxyScene = ({ data, windowSize }) => {
           },
         },
         "<+=0.3"
-      )
-      .to(
-        planetRefs.current.map((mesh) => mesh.scale),
-        {
-          x: 1.15,
-          y: 1.15,
-          z: 1.15,
-          duration: 2,
-          repeatDelay: 1,
-          repeat: -1,
-          yoyo: true,
-          stagger: {
-            amount: 1,
-            ease: "sine.inOut",
-          },
-          ease: "sine.inOut",
-        }
       );
   });
 
@@ -553,6 +596,7 @@ const GalaxyScene = ({ data, windowSize }) => {
 
         setShowLimitlessText(true);
         setShowPlanetsText(true);
+        handlePlanetDynamicScale(true);
       },
       onComplete: () => {
         // setFinishedPlanetTransition(true); // Make active planet's dot larger and fadeout other planets
@@ -589,25 +633,9 @@ const GalaxyScene = ({ data, windowSize }) => {
         z: 1,
         duration: 3,
       })
-      .to(
-        planetRefs.current.map((mesh) => mesh.scale),
-        {
-          x: 1.15,
-          y: 1.15,
-          z: 1.15,
-          duration: 2,
-          repeatDelay: 1,
-          repeat: -1,
-          yoyo: true,
-          stagger: {
-            // each: 0.5,
-            // from: "center",
-            amount: 1,
-            ease: "sine.inOut",
-          },
-          ease: "sine.inOut",
-        }
-      );
+      .set(planetsOrbitRef.current.rotation, {
+        y: Math.PI * 4.35,
+      });
   });
 
   // ! TRANSITION ANIMATION 3: HOME TO PLANET ANIMATION
@@ -618,10 +646,12 @@ const GalaxyScene = ({ data, windowSize }) => {
         setPauseAutoRotation(true);
         setPlanetIsTransitioning(true);
         setFinishedPlanetTransition(false);
+        handlePlanetDynamicScale(false);
       },
       onComplete: () => {
         setFinishedPlanetTransition(true); // Make active planet's dot larger and fadeout other planets
         transitionComplete();
+        handlePlanetDynamicScale(true);
       },
     });
 
@@ -676,6 +706,11 @@ const GalaxyScene = ({ data, windowSize }) => {
         setIntroStarted();
         setFinishedPlanetTransition(false);
       },
+      onComplete: () => {
+        setPauseAutoRotation(false);
+        setPlanetIsTransitioning(false);
+        transitionComplete();
+      },
     });
 
     // Shrink the active planet back to original size
@@ -708,39 +743,16 @@ const GalaxyScene = ({ data, windowSize }) => {
     );
 
     // Show Limitless group again
-    tl.current
-      .to(
-        limitlessRef.current.scale,
-        {
-          x: 1,
-          y: 1,
-          z: 1,
-          duration: 1,
-          onComplete: () => {
-            setPauseAutoRotation(false);
-            setPlanetIsTransitioning(false);
-            transitionComplete();
-          },
-        },
-        "<+=0.5"
-      )
-      .to(
-        planetRefs.current.map((mesh) => mesh.scale),
-        {
-          x: 1.15,
-          y: 1.15,
-          z: 1.15,
-          duration: 2,
-          repeatDelay: 1,
-          repeat: -1,
-          yoyo: true,
-          stagger: {
-            amount: 1,
-            ease: "sine.inOut",
-          },
-          ease: "sine.inOut",
-        }
-      );
+    tl.current.to(
+      limitlessRef.current.scale,
+      {
+        x: 1,
+        y: 1,
+        z: 1,
+        duration: 1,
+      },
+      "<+=0.5"
+    );
   });
 
   // ! TRANSITION ANIMATION 5: TO LIMITLESS PAGE (FOR MOVING TO LIMITLESS PAGE)

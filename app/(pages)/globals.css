@@ -16,7 +16,7 @@
 
   --spacing: 1em;
   --radius: 1em;
-  --breakpoint-xs: 360px;
+  --breakpoint-xs: 420px;
 
   --font-base: "Montserrat", sans-serif;
   --font-heading: "Baskervville", serif;
@@ -36,17 +36,17 @@ h2 {
 
 h1,
 .h1 {
-  @apply text-[12.5vw] xs:text-[40px] sm:text-[6vw] md:text-[6vw] lg:text-[4.5vw] leading-[1.1];
+  @apply text-[12.5vw] xs:text-[50px] sm:text-[6vw] md:text-[6vw] lg:text-[4.5vw] leading-[1.1];
 }
 
 h2,
 .h2 {
-  @apply text-[9vw] xs:text-xl sm:text-[6vw] md:text-[5.5vw] lg:text-[3.75vw] leading-[1.2];
+  @apply text-[9vw] xs:text-3xl sm:text-[6vw] md:text-[5.5vw] lg:text-[3.75vw] leading-[1.2];
 }
 
 h3,
 .h3 {
-  @apply text-[5.5vw] xs:text-xl sm:text-[3.5vw] md:text-[3vw] lg:text-[2vw] font-medium font-heading;
+  @apply text-[5.5vw] xs:text-2xl sm:text-[3.5vw] md:text-[3vw] lg:text-[2vw] font-medium font-heading;
 }
 
 h4,
@@ -55,10 +55,10 @@ h4,
 }
 
 .p-lg {
-  @apply text-[4vw] xs:text-base md:text-[2vw] lg:text-[1.5vw] leading-[1.5] !font-light font-heading;
+  @apply text-[4vw] xs:text-lg md:text-[2vw] lg:text-[1.5vw] leading-[1.5] !font-light font-heading;
 }
 .p-xs {
-  @apply text-[2.5vw] xs:text-[10px] md:text-[1.5vw] lg:text-[0.9vw] leading-[1.5] !font-light;
+  @apply text-[2.5vw] xs:text-xs md:text-[1.5vw] lg:text-[0.9vw] leading-[1.5] !font-light;
 }
 p,
 a,
@@ -71,7 +71,7 @@ textarea {
   @apply text-[3.65vw] xs:text-sm md:text-[1.8vw] lg:text-[1.2vw] leading-[1.5] !font-light font-base;
 }
 .xs {
-  @apply text-[3.2vw] xs:text-xs md:text-[1.5vw] lg:text-[1vw] leading-[1.5] !font-light;
+  @apply text-[3.2vw] xs:text-sm md:text-[1.5vw] lg:text-[1vw] leading-[1.5] !font-light;
 }
 
 a,
