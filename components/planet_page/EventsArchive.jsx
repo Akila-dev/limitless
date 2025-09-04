@@ -74,7 +74,7 @@ const EventsArchive = ({ data }) => {
               paragraph={
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
               }
-              titleClassName="h2 !font-base pb-0.25"
+              titleClassName="h2 !font-base"
               onlyOnce
               animateImmediately
             />

@@ -77,7 +77,7 @@ const BlogArchive = ({ data }) => {
         {/* TEXT CONTENT */}
         <div className="left-0 w-full container grid-2-v2">
           <div className="pt-25 md:pt-3">
-            <CardsAnimationWrapper className="flex mb-3">
+            <CardsAnimationWrapper className="flex mb-3" onlyOnce>
               <Button text="Back to Galaxy" href="/" back />
             </CardsAnimationWrapper>
             <Text4R3F
@@ -85,13 +85,14 @@ const BlogArchive = ({ data }) => {
               paragraph={
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
               }
-              titleClassName="h2 !font-base pb-0.5"
+              titleClassName="h2 !font-base"
               onlyOnce
               animateImmediately
-            />
-            <CardsAnimationWrapper className="flex mt-1">
-              <SubscribeForm filledStyle />
-            </CardsAnimationWrapper>
+            >
+              <div className="flex mt-1">
+                <SubscribeForm filledStyle />
+              </div>
+            </Text4R3F>
           </div>
         </div>
       </div>

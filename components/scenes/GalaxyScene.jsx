@@ -254,10 +254,12 @@ const GalaxyScene = ({ data, windowSize }) => {
 
   // ! PREFETCH ROUTES DATA
   useEffect(() => {
-    planets_slugs.forEach((slug) => {
-      router.prefetch(slug);
-    });
-    router.prefetch("/limitless");
+    if (pathname === "/") {
+      planets_slugs.forEach((slug) => {
+        router.prefetch(slug);
+      });
+      router.prefetch("/limitless");
+    }
   }, [router]);
 
   // ! TRANSITION ANIMATIONS
@@ -363,7 +365,7 @@ const GalaxyScene = ({ data, windowSize }) => {
       .set(planetsOrbitRef.current.rotation, { x: 0, y: 0, z: 0 })
       .set(
         planetRefs.current.map((mesh) => mesh.scale),
-        { x: 1, y: 1, z: 1 }
+        { x: planetScale, y: planetScale, z: planetScale }
       );
 
     if (animate) {
@@ -402,9 +404,9 @@ const GalaxyScene = ({ data, windowSize }) => {
           i > 0 ? "<+=" + planetScaleFactor : 0
         )
         .to(planet.scale, {
-          x: 1,
-          y: 1,
-          z: 1,
+          x: planetScale,
+          y: planetScale,
+          z: planetScale,
         });
     });
   }, []);
@@ -839,11 +841,33 @@ const GalaxyScene = ({ data, windowSize }) => {
       .to(starsRef.current.scale, { x: 1, y: 1, z: 1 }, "<+=0.5");
   });
 
+  // useEffect(() => {
+  //   if (tl.current?.isActive()) {
+  //     tl.current.invalidate();
+  //     if (currentScale) {
+  //       gsap.set(planetRefs.current[activePlanet].scale, {
+  //         x: currentScale.x,
+  //         y: currentScale.y,
+  //         z: currentScale.z,
+  //       });
+  //     }
+  //   }
+  // }, [isDesktopLayout]);
+
   useEffect(() => {
     if (tl.current?.isActive()) {
-      tl.current.invalidate(); // Recalculate values
+      tl.current.invalidate();
     }
-  }, [isDesktopLayout]);
+
+    const active = planetRefs.current[activePlanet];
+    if (!active) return;
+
+    // Store the current scale BEFORE invalidation
+    const { x, y, z } = active.scale;
+
+    // Reapply current scale AFTER invalidation
+    gsap.set(active.scale, { x, y, z });
+  }, [isDesktopLayout, activePlanet]);
 
   return (
     <group ref={container}>

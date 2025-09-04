@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -26,43 +26,35 @@ const Text4R3F = ({
   const titleRef = useRef();
   const subtitleRef = useRef();
   const paragraphRef = useRef();
+  const buttonRefs = useRef([]);
 
-  // SplitText refs
+  const tlRef = useRef(); // * Timeline Ref
+
+  // ! SPLIT TEXT REFS
   const splitHRef = useRef();
   const splitSTRef = useRef();
   const splitPRef = useRef();
 
-  // Timeline ref
-  const tlRef = useRef();
-
-  const cleanupSplits = () => {
+  const splitAndAnimate = () => {
     splitHRef.current?.revert();
     splitSTRef.current?.revert();
     splitPRef.current?.revert();
-    tlRef.current?.kill();
-    tlRef.current = null;
-  };
 
-  const splitAndAnimate = () => {
-    cleanupSplits();
-
-    // Title
+    // ! SPLIT TITLE
     if (titleRef.current) {
       splitHRef.current = new SplitText(titleRef.current, {
         type: "words, lines",
         mask: "lines",
       });
     }
-
-    // Subtitle
+    // ! SPLIT SUBTITLE
     if (subtitleRef.current) {
       splitSTRef.current = new SplitText(subtitleRef.current, {
         type: "lines",
         mask: "lines",
       });
     }
-
-    // Paragraph
+    // ! SPLIT PARAGRAPH
     if (paragraphRef.current) {
       splitPRef.current = new SplitText(paragraphRef.current, {
         type: "words, lines",
@@ -70,7 +62,7 @@ const Text4R3F = ({
       });
     }
 
-    // Timeline
+    // ! ANIMATE SPLIT TEXTS
     tlRef.current = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
@@ -87,33 +79,34 @@ const Text4R3F = ({
         stagger: 0.1,
       },
     });
-
     tlRef.current.set(containerRef.current, { y: 0, opacity: 1 });
-
-    // Animate title
-    if (splitHRef.current) {
+    // * TITLE ANIMATION
+    if (titleRef.current && splitHRef.current) {
       tlRef.current.from(splitHRef.current.words, {
-        delay: delay || 0,
+        duration: 1,
+        delay: delay ? delay : 0,
       });
     }
-
-    // Animate subtitle
-    if (splitSTRef.current) {
+    // * SUBTITLE ANIMATION
+    if (subtitleRef.current && splitSTRef.current) {
       tlRef.current.from(
         splitSTRef.current.lines,
-        { delay: !titleRef.current && delay ? delay : 0 },
-        titleRef.current ? ">-=0.8" : ">"
+        {
+          duration: 1,
+          delay: !titleRef.current && delay ? delay : 0,
+        },
+        titleRef.current ? ">-=1" : ">"
       );
     }
-
-    // Animate paragraph
-    if (splitPRef.current) {
+    // * PARAGRAPH ANIMATION
+    if (paragraphRef.current && splitPRef.current) {
       tlRef.current.from(
         splitPRef.current.lines,
         {
+          duration: 1,
           delay: !titleRef.current && !subtitleRef.current && delay ? delay : 0,
         },
-        titleRef.current ? ">-=0.8" : ">"
+        titleRef.current ? ">-=1" : ">"
       );
     }
 
@@ -123,7 +116,6 @@ const Text4R3F = ({
   useGSAP(
     () => {
       const ctx = gsap.context(() => {
-        // Wait until fonts are ready, then split
         document.fonts.ready.then(() => {
           splitAndAnimate();
         });
@@ -134,14 +126,18 @@ const Text4R3F = ({
           clearTimeout(resizeTimeout);
           resizeTimeout = setTimeout(() => {
             splitAndAnimate();
-          }, 150);
+          }, 100);
         };
 
         window.addEventListener("resize", handleResize);
 
         return () => {
           window.removeEventListener("resize", handleResize);
-          cleanupSplits();
+
+          splitHRef.current?.revert();
+          splitSTRef.current?.revert();
+          splitPRef.current?.revert();
+          tlRef.current?.kill();
         };
       }, containerRef);
 
@@ -153,23 +149,28 @@ const Text4R3F = ({
   return (
     <div
       ref={containerRef}
-      className={`flex flex-col gap-1.5 opacity-0 ${
-        center ? "text-center !text-center" : ""
-      }`}
+      className={`flex flex-col gap-1.5 opacity-0 ${center ? "text-center" : ""} ${center ? "!text-center" : ""}`}
     >
       {title && (
-        <h1 ref={titleRef} className={titleClassName || ""}>
+        <h1
+          ref={titleRef}
+          className={`${titleClassName ? titleClassName : ""}`}
+        >
           {title}
         </h1>
       )}
       {subtitle && (
-        <p ref={subtitleRef} className="p-lg">
+        <p ref={subtitleRef} className={`p-lg`}>
           {subtitle}
         </p>
       )}
-      {paragraph && <p ref={paragraphRef}>{paragraph}</p>}
+      {paragraph && (
+        <p ref={paragraphRef} className={``}>
+          {paragraph}
+        </p>
+      )}
       {buttons && (
-        <CardsAnimationWrapper delay={0.5} onlyOnce={onlyOnce} className="mt-1">
+        <CardsAnimationWrapper delay={0.5} onlyOnce={onlyOnce} classNAme="mt-1">
           {buttons.map((button, i) => (
             <div key={i} className="flex-v-center">
               <Button text={button.text} href={button.url} />

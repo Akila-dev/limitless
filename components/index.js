@@ -26,7 +26,6 @@ export { default as NewsLetterSubscribe } from "./NewsLetterSubscribe.jsx";
 
 // BLOG
 export { default as BlogArchive } from "./blog/BlogArchive.jsx";
-export { default as BlogPost } from "./blog/BlogPost.jsx";
 export { default as BlogFooter } from "./blog/BlogFooter.jsx";
 
 // PLANETS' PAGE

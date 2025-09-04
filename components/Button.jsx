@@ -14,20 +14,6 @@ const Button = ({ text, href, onClick, back, white }) => {
   const container = useRef();
   const { contextSafe } = useGSAP({ scope: container });
 
-  useGSAP(
-    () => {
-      gsap.from(".gsap-show", {
-        opacity: 0,
-        y: 15,
-        duration: 0.75,
-        stagger: 0.175,
-        ease: "power2.out",
-        delay: 0.5,
-      });
-    },
-    { scope: container }
-  );
-
   const hovering = contextSafe(() => {
     if (back) {
       gsap.to(".gsap-button", {

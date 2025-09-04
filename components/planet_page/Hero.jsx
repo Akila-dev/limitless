@@ -11,13 +11,15 @@ const Hero = ({ text }) => {
       {/* TEXT CONTENT */}
       <div className="left-0 w-full container grid-2-v2">
         <div className="pt-25 md:pt-3">
-          <CardsAnimationWrapper className="flex mb-3">
+          <CardsAnimationWrapper className="flex mb-3" onlyOnce>
             <Button text="Back to Galaxy" href="/" back />
           </CardsAnimationWrapper>
           <Text4R3F
             title={text.title}
             paragraph={text.paragraph}
             subtitle={text.subtitle}
+            animateImmediately
+            onlyOnce
           />
         </div>
       </div>
