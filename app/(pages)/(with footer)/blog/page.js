@@ -2,22 +2,29 @@ import { BlogArchive } from "@/components";
 
 // ! SANITY
 import { client } from "@/sanity/lib/client";
-import { GET_BLOG_LIST } from "@/sanity/lib/queries";
 const options = { next: { revalidate: 30 } };
 
-export default async function Limitless() {
-  const data = await client.fetch(GET_BLOG_LIST, options);
+const PAGE_SIZE = 8;
 
-  const loadMore = () => {
-    console.log("load more");
-    // const newPosts = await fetchPosts(visible);
-    // setPosts((prev) => [...prev, ...newPosts]);
-    // setVisible((prev) => prev + newPosts.length);
-  };
+export default async function Limitless() {
+  const initialData = await client.fetch(
+    `*[_type=="blog" && defined(slug.current)][0...${PAGE_SIZE}] | order(date desc) | order(_createdAt asc){
+    title,
+    excerpt,
+    mainImage{
+      asset-> {
+        __id,
+        url
+      }
+    },
+    slug
+  }`,
+    options
+  );
 
   return (
     <div className="">
-      <BlogArchive data={data} />
+      <BlogArchive initialData={initialData} />
     </div>
   );
 }

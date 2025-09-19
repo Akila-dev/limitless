@@ -67,7 +67,7 @@ const Button = ({ text, href, onClick, back, white }) => {
         className={
           back
             ? "flex-v-center uppercase gsap-button"
-            : `relative z-1 group-hover:text-bg duration-700 flex-center ${white ? "!text-bg group-hover:!text-fg" : ""}`
+            : `relative z-1 group-hover:text-bg duration-700 flex-center ${white ? "!text-bg group-hover:!text-fg" : "!text-fg group-hover:!text-bg"}`
         }
       >
         {back && <FaChevronLeft className="h3" />}
@@ -92,7 +92,7 @@ const Button = ({ text, href, onClick, back, white }) => {
         className={
           back
             ? "flex-v-center uppercase gsap-button"
-            : `relative z-1 group-hover:text-bg duration-700 flex-center ${white ? "!text-bg group-hover:!text-fg" : ""}`
+            : `relative z-1 group-hover:text-bg duration-700 flex-center ${white ? "!text-bg group-hover:!text-fg" : "!text-fg group-hover:!text-bg"}`
         }
       >
         {back && <FaChevronLeft className="h3" />}

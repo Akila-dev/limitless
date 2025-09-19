@@ -59,14 +59,25 @@ const BlogCard = ({ title, date, image, slug, excerpt, author }) => {
   );
 };
 
-const BlogArchive = ({ data }) => {
-  const [fetchMoreCount, setFetchMoreCount] = useState(1);
-  const router = useRouter();
+const BlogArchive = ({ initialData }) => {
+  const [data, setData] = useState(initialData);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [noMoreDate, setNoMoreDate] = useState(false);
+  const PAGE_SIZE = 8;
 
-  const fetchMoreData = (i) => {
-    setFetchMoreCount(i + 1);
-    router.push(`?loadMore=${i}`);
+  const loadMore = async () => {
+    setLoading(true);
+    const res = await fetch(`/api/blog?page=${page + 1}`);
+    const newData = await res.json();
+    if (newData.length < PAGE_SIZE) {
+      setNoMoreDate(true);
+    }
+    setData((prev) => [...prev, ...newData]);
+    setPage((prev) => prev + 1);
+    setLoading(false);
   };
+
   return (
     <div className="py-5">
       {/* ! RECENT POSTS */}
@@ -113,13 +124,18 @@ const BlogArchive = ({ data }) => {
                 />
               ))}
             </CardsAnimationWrapper>
-            <CardsAnimationWrapper className="flex-center" onlyOnce>
-              <Button
-                text="LOAD MORE"
-                onClick={() => fetchMoreData(fetchMoreCount)}
-                white
-              />
-            </CardsAnimationWrapper>
+
+            <div className="flex-center flex-col">
+              {noMoreDate && (
+                <p className="text-center">You’re all caught up 🎉</p>
+              )}
+              <CardsAnimationWrapper
+                className={`flex-center ${noMoreDate ? "pointer-events-none !opacity-50" : loading ? "animate-pulse pointer-events-none" : ""}`}
+                onlyOnce
+              >
+                <Button text="LOAD MORE" onClick={() => loadMore()} white />
+              </CardsAnimationWrapper>
+            </div>
           </div>
         ) : (
           <EmptyData text="No posts yet" />
