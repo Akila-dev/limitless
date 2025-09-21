@@ -16,6 +16,10 @@ export const footerSection = defineType({
       title: "Paragraph (Use either subtitle or paragraph not both)",
       type: "text",
     }),
-    defineField({ name: "url", title: "URL", type: "url" }),
+    defineField({
+      name: "url",
+      title: "Reserve Seat URL (Leave Empty if not available)",
+      type: "url",
+    }),
   ],
 });

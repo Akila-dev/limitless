@@ -45,10 +45,10 @@ export const blog = defineType({
     }),
     defineField({
       name: "excerpt",
-      title: "Excerpt",
+      title: "Excerpt (Max: 300 characters)",
       type: "text",
       rows: 3,
-      validation: (Rule) => Rule.max(200),
+      validation: (Rule) => Rule.max(300),
     }),
     defineField({
       name: "categories",

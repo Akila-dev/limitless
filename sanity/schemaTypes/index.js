@@ -1,3 +1,4 @@
+import { nonPlanetPageText } from "./nonPlanetPageText";
 import { planetPage } from "./planetPage";
 import { event } from "./event";
 import { blog } from "./blog";
@@ -13,15 +14,16 @@ import { blockContent } from "./objects/blockContent";
 
 export const schema = {
   types: [
+    nonPlanetPageText,
     planetPage,
     event,
+    blog,
+    eventsTag,
+    author,
+    blogCategory,
     section,
     footerSection,
     featuresSection,
-    eventsTag,
-    blog,
-    author,
-    blogCategory,
     blockContent,
   ],
 };

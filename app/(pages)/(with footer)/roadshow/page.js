@@ -25,9 +25,19 @@ export default async function Limitless() {
     options
   );
 
+  const heroText = await client.fetch(
+    `*[_type=="nonPlanetPageText" && defined(slug.current) && slug.current == "roadshow-hero"]{
+          text_content
+        }`,
+    options
+  );
+
   return (
     <div className="">
-      <EventsArchive initialData={initialData} />
+      <EventsArchive
+        initialData={initialData}
+        heroText={heroText[0]?.text_content}
+      />
     </div>
   );
 }

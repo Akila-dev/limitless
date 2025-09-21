@@ -22,9 +22,19 @@ export default async function Limitless() {
     options
   );
 
+  const heroText = await client.fetch(
+    `*[_type=="nonPlanetPageText" && defined(slug.current) && slug.current == "blog-hero"]{
+        text_content
+      }`,
+    options
+  );
+
   return (
     <div className="">
-      <BlogArchive initialData={initialData} />
+      <BlogArchive
+        initialData={initialData}
+        heroText={heroText[0]?.text_content}
+      />
     </div>
   );
 }

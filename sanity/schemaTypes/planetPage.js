@@ -37,7 +37,7 @@ export const planetPage = defineType({
     }),
     defineField({
       name: "features",
-      title: "Features Section",
+      title: "Features/BulletList Section",
       type: "featuresSection",
     }),
     defineField({

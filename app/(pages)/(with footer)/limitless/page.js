@@ -1,12 +1,23 @@
 import Image from "next/image";
 
+// ! SANITY
+import { client } from "@/sanity/lib/client";
+const options = { next: { revalidate: 30 } };
+
 // ! COMPONENTS
 import { Text4R3F } from "@/components";
 
 import logo from "@/assets/images/limitless_letters.png";
 import metaverse_bg from "@/assets/images/metaverse-x.png";
 
-export default function Limitless() {
+export default async function Limitless() {
+  const textData = await client.fetch(
+    `*[_type=="nonPlanetPageText" && defined(slug.current) && slug.current == "limitless-paragraph"]{
+      text_content
+    }`,
+    options
+  );
+
   return (
     <div className="pt-[35vh]">
       {/* Sphere Logo */}
@@ -23,10 +34,7 @@ export default function Limitless() {
       </div>
       <div id="sphere-trigger" className="container flex-center !pb-1">
         <div className="max-w">
-          <Text4R3F
-            paragraph="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent bland"
-            center
-          />
+          <Text4R3F paragraph={textData[0]?.text_content?.paragraph} center />
         </div>
       </div>
       <div className="w-full min-h-screen pb-5">

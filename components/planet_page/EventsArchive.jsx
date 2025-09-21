@@ -48,7 +48,7 @@ const EventsCard = ({ name, date, image, slug, tag, location, alt }) => {
   );
 };
 
-const EventsArchive = ({ initialData }) => {
+const EventsArchive = ({ initialData, heroText }) => {
   const [data, setData] = useState(initialData);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -81,10 +81,8 @@ const EventsArchive = ({ initialData }) => {
               <Button text="Back to Galaxy" href="/" back />
             </CardsAnimationWrapper>
             <Text4R3F
-              title={"ROADSHOW: LIMITLESS EVENTS"}
-              paragraph={
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-              }
+              title={heroText?.title}
+              paragraph={heroText?.paragraph}
               titleClassName="h2 !font-base"
               onlyOnce
               animateImmediately

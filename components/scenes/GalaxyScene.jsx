@@ -778,9 +778,9 @@ const GalaxyScene = ({ data, windowSize }) => {
     tl.current
       // SET INITIAL VALUES
       .set(sunRef.current.scale, {
-        x: limitlessPageLimitlessScale,
-        y: limitlessPageLimitlessScale,
-        z: limitlessPageLimitlessScale,
+        x: limitlessPageLimitlessScale * 0.95,
+        y: limitlessPageLimitlessScale * 0.95,
+        z: limitlessPageLimitlessScale * 0.95,
       })
       .set(
         sunRef.current.position,
